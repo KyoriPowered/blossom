@@ -1,7 +1,13 @@
-# intellij
-.idea/
-*.iml
+# Eclipse
+.settings/
+.classpath
+.project
 
-# gradle
+# Gradle
 .gradle/
 build/
+
+# IntelliJ IDEA
+.idea/
+atlassian-ide-plugin.xml
+*.iml

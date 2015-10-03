@@ -1,7 +1,11 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'maven'
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'maven'
+    id 'com.github.hierynomus.license' version '0.11.0'
+    id 'com.gradle.plugin-publish' version '0.9.1'
+}
 
 group 'net.ellune'
 version '1.0.0-SNAPSHOT'
@@ -15,12 +19,55 @@ configure([compileJava, compileTestJava]) {
     options.encoding = 'UTF-8'
 }
 
+javadoc {
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+    options.jFlags('-Xms256m', '-Xmx512m')
+}
+
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        // Disable the crazy super-strict doclint tool in Java 8
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
 repositories {
     mavenLocal()
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
     compile gradleApi()
     compile 'com.google.guava:guava:18.0'
+}
+
+license {
+    header rootProject.file('HEADER')
+    include '**/*.java'
+    excludes ([
+        '**/net/ellune/blossom/task/SourceReplacementTask.java',
+    ])
+    ignoreFailures false
+    strictCheck true
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/Ellune/Blossom/'
+    vcsUrl = 'https://github.com/Ellune/Blossom/'
+    description = 'Gradle plugin to perform source code token replacements in Java-based projects'
+    tags = ['blossom', 'replacement']
+    plugins {
+        blossom {
+            id = 'net.ellune.blossom'
+            displayName = 'Blossom'
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.7'
 }
