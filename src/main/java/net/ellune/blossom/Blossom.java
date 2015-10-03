@@ -73,6 +73,7 @@ public final class Blossom implements Plugin<Project> {
 
         this.project.getExtensions().create(EXTENSION_NAME, BlossomExtension.class, this);
 
+        this.applyPlugin("java");
         this.createTasks();
     }
 
@@ -126,6 +127,10 @@ public final class Blossom implements Plugin<Project> {
             compile.dependsOn("blossomSourceReplacementGroovy");
             compile.setSource(dir);
         }
+    }
+
+    private void applyPlugin(String plugin) {
+        this.project.apply(ImmutableMap.of("plugin", plugin));
     }
 
     /**
