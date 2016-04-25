@@ -1,6 +1,6 @@
 /*
  * This file is part of Blossom, licensed under the GNU Lesser General Public License.
- * Copyright (C) 2015 Ellune
+ * Copyright (C) 2015-2016 MiserableNinja
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  * USA
  */
-package net.ellune.blossom.util;
+package ninja.miserable.blossom.util;
 
 import java.io.File;
 
