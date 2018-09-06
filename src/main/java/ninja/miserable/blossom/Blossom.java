@@ -26,7 +26,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.internal.plugins.DslObject;
-import org.gradle.api.logging.Logger;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.GroovySourceSet;
 import org.gradle.api.tasks.ScalaSourceSet;
@@ -40,8 +39,6 @@ import java.io.File;
 public final class Blossom implements Plugin<Project> {
 
     public static final String EXTENSION_NAME = "blossom";
-    /** A flag to prevent the banned from being displayed more than one time. */
-    private static boolean displayBanner = true;
     /** The current project. */
     public Project project;
 
@@ -52,15 +49,6 @@ public final class Blossom implements Plugin<Project> {
         this.project.afterEvaluate(new Action<Project>() {
             @Override
             public void execute(Project project) {
-                if (displayBanner) {
-                    Logger logger = Blossom.this.project.getLogger();
-                    logger.lifecycle("########################");
-                    logger.lifecycle("## Powered by Blossom ##");
-                    logger.lifecycle("########################");
-                }
-
-                displayBanner = false;
-
                 final BlossomExtension extension = (BlossomExtension) Blossom.this.project.getExtensions().getByName(EXTENSION_NAME);
                 // Configure tasks with extension data
                 for (final SourceReplacementTask task : Blossom.this.project.getTasks().withType(SourceReplacementTask.class)) {
