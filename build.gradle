@@ -7,7 +7,7 @@ plugins {
   id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
-group 'ninja.miserable'
+group 'net.kyori'
 version '1.1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
@@ -39,7 +39,7 @@ dependencies {
 license {
   header rootProject.file('header.txt')
   include '**/*.java'
-  exclude '**/ninja/miserable/blossom/task/SourceReplacementTask.java'
+  exclude '**/net/kyori/blossom/task/SourceReplacementTask.java'
   newLine false
 }
 
@@ -51,8 +51,8 @@ pluginBundle {
 
   plugins {
     blossom {
-      id = 'ninja.miserable.blossom'
-      displayName = 'Blossom'
+      id = 'net.kyori.blossom'
+      displayName = 'blossom'
     }
   }
 }

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  * USA
  */
-package ninja.miserable.blossom.task;
+package net.kyori.blossom.task;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.HashMultimap;
@@ -27,7 +27,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
 import groovy.lang.Closure;
-import ninja.miserable.blossom.util.FileUtil;
+
+import net.kyori.blossom.util.FileUtil;
+
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryTree;
 import org.gradle.api.file.FileTree;

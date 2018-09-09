@@ -17,10 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  * USA
  */
-package ninja.miserable.blossom;
+package net.kyori.blossom;
 
 import com.google.common.collect.ImmutableMap;
-import ninja.miserable.blossom.task.SourceReplacementTask;
+import net.kyori.blossom.task.SourceReplacementTask;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;

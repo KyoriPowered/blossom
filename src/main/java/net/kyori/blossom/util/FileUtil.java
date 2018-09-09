@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  * USA
  */
-package ninja.miserable.blossom.util;
+package net.kyori.blossom.util;
 
 import java.io.File;
 
