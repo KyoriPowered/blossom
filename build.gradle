@@ -1,73 +1,58 @@
 plugins {
-    id 'java'
-    id 'eclipse'
-    id 'idea'
-    id 'maven'
-    id 'com.github.hierynomus.license' version '0.12.1'
-    id 'com.gradle.plugin-publish' version '0.9.4'
+  id 'java'
+  id 'eclipse'
+  id 'idea'
+  id 'maven'
+  id 'net.minecrell.licenser' version '0.4.1'
+  id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
 group 'ninja.miserable'
-version '1.0.1'
+version '1.1.0-SNAPSHOT'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 configure([compileJava, compileTestJava]) {
-    options.compilerArgs += ['-Xlint:all', '-Xlint:-path']
-    options.deprecation = true
-    options.encoding = 'UTF-8'
+  options.compilerArgs += ['-Xlint:all', '-Xlint:-path']
+  options.deprecation = true
+  options.encoding = 'UTF-8'
 }
 
 javadoc {
-    options.encoding = 'UTF-8'
-    options.charSet = 'UTF-8'
-    options.jFlags('-Xms256m', '-Xmx512m')
-}
-
-if (JavaVersion.current().isJava8Compatible()) {
-    tasks.withType(Javadoc) {
-        // Disable the crazy super-strict doclint tool in Java 8
-        options.addStringOption('Xdoclint:none', '-quiet')
-    }
+  options.encoding = 'UTF-8'
+  options.charSet = 'UTF-8'
+  options.jFlags('-Xms256m', '-Xmx512m')
 }
 
 repositories {
-    mavenLocal()
-    jcenter()
+  mavenLocal()
+  mavenCentral()
+  jcenter()
 }
 
 dependencies {
-    compile gradleApi()
-    compile 'com.google.guava:guava:18.0'
+  compile gradleApi()
+  compile 'com.google.guava:guava:21.0'
 }
 
 license {
-    header rootProject.file('HEADER')
-    include '**/*.java'
-    excludes ([
-        '**/ninja/miserable/blossom/task/SourceReplacementTask.java',
-    ])
-    ignoreFailures false
-    strictCheck true
-    mapping {
-        java = 'SLASHSTAR_STYLE'
-    }
+  header rootProject.file('header.txt')
+  include '**/*.java'
+  exclude '**/ninja/miserable/blossom/task/SourceReplacementTask.java'
+  newLine false
 }
 
 pluginBundle {
-    website = 'https://github.com/MiserableNinja/Blossom/'
-    vcsUrl = 'https://github.com/MiserableNinja/Blossom/'
-    description = 'Gradle plugin to perform source code token replacements in Java-based projects'
-    tags = ['blossom', 'replacement']
-    plugins {
-        blossom {
-            id = 'ninja.miserable.blossom'
-            displayName = 'Blossom'
-        }
-    }
-}
+  website = 'https://github.com/KyoriPowered/blossom/'
+  vcsUrl = 'https://github.com/KyoriPowered/blossom/'
+  description = 'Gradle plugin to perform source code token replacements in Java-based projects'
+  tags = ['blossom', 'replacement']
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
+  plugins {
+    blossom {
+      id = 'ninja.miserable.blossom'
+      displayName = 'Blossom'
+    }
+  }
 }
