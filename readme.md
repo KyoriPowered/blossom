@@ -1,13 +1,13 @@
-Blossom [![Build Status](https://travis-ci.org/KyoriPowered/blossom.svg?branch=master)](https://travis-ci.org/KyoriPowered/blossom) [![License](http://img.shields.io/badge/license-LGPL_v2.1-lightgrey.svg?style=flat)][LGPL v2.1]
+blossom [![Build Status](https://travis-ci.org/KyoriPowered/blossom.svg?branch=master)](https://travis-ci.org/KyoriPowered/blossom) [![License](http://img.shields.io/badge/license-LGPL_v2.1-lightgrey.svg?style=flat)][LGPL v2.1] [![Gradle Plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/gradle/plugin/net/kyori/blossom/maven-metadata.xml.svg?label=gradle%20plugin&style=flat)](https://plugins.gradle.org/plugin/net.kyori.blossom)
 =========
-Blossom is a Gradle plugin that enables the ability perform source code token replacements in Java-based projects. It is licensed under the [LGPL v2.1] license.
+blossom is a Gradle plugin that enables the ability perform source code token replacements in Java-based projects. It is licensed under the [LGPL v2.1] license.
 
 ## Usage
 To start with. You'll need to add the plugin to your plugins block.
 
 ```groovy
 plugins {
-    id "net.kyori.blossom" version "TODO"
+    id "net.kyori.blossom" version "1.1.0"
 }
 ```
 
