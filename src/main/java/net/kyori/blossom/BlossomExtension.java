@@ -59,7 +59,10 @@ public class BlossomExtension {
   }
 
   /**
-   * @see {@link #replaceToken(Object, Object)}
+   * Replaces a map of tokens, where the map key is the 'token'
+   * and the corresponding value is the 'replacement'.
+   *
+   * @see #replaceToken(Object, Object)
    */
   public void replaceToken(final Map<Object, Object> map) {
     for(final Map.Entry<Object, Object> entry : map.entrySet()) {
