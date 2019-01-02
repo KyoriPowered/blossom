@@ -23,6 +23,7 @@ package net.kyori.blossom;
 
 import java.io.File;
 import net.kyori.blossom.task.BuiltInSourceReplacementTasks;
+import net.kyori.blossom.task.KotlinSourceReplacementTask;
 import net.kyori.blossom.task.SourceReplacementTask;
 import net.kyori.mammoth.ProjectPlugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -88,6 +89,10 @@ public final class Blossom implements ProjectPlugin {
 
     if(this.project.getPlugins().hasPlugin("groovy")) {
       BuiltInSourceReplacementTasks.setupGroovy(this, mainSourceSet);
+    }
+
+    if(this.project.getPlugins().hasPlugin("kotlin")) {
+      KotlinSourceReplacementTask.setup(this, mainSourceSet);
     }
   }
 
