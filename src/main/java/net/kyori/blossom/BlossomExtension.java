@@ -45,7 +45,7 @@ public class BlossomExtension {
   protected transient Project project;
 
   public BlossomExtension(final Blossom blossom) {
-    this.project = blossom.project;
+    this.project = blossom.getProject();
   }
 
   /**
