@@ -217,12 +217,30 @@ public class SourceReplacementTask extends DefaultTask {
   }
 
   /**
+   * Get the input location.
+   *
+   * @return The input location
+   */
+  public SourceDirectorySet getInput() {
+    return this.input;
+  }
+
+  /**
    * Set the input location.
    *
    * @param input The input location
    */
   public void setInput(final SourceDirectorySet input) {
     this.input = input;
+  }
+
+  /**
+   * Get the output location.
+   *
+   * @return The output location
+   */
+  public File getOutput() {
+    return this.output;
   }
 
   /**
@@ -235,6 +253,15 @@ public class SourceReplacementTask extends DefaultTask {
   }
 
   /**
+   * Get the global token replacements.
+   *
+   * @return The global token replacements
+   */
+  public Map<String, Object> getTokenReplacementsGlobal() {
+    return this.tokenReplacementsGlobal;
+  }
+
+  /**
    * Set the global token replacements.
    *
    * @param map The global token replacements
@@ -244,12 +271,30 @@ public class SourceReplacementTask extends DefaultTask {
   }
 
   /**
+   * Get the global token replacement locations.
+   *
+   * @return  The global token replacement locations
+   */
+  public List<String> getTokenReplacementsGlobalLocations() {
+    return this.tokenReplacementsGlobalLocations;
+  }
+
+  /**
    * Set the global token replacement locations.
    *
    * @param locations The global token replacement locations
    */
   public void setTokenReplacementsGlobalLocations(final List<String> locations) {
     this.tokenReplacementsGlobalLocations.addAll(locations);
+  }
+
+  /**
+   * Get the by-file token replacements.
+   *
+   * @return The by-file token replacements
+   */
+  public Multimap<String, Map<String, Object>> getTokenReplacementsByFile() {
+    return this.tokenReplacementsByFile;
   }
 
   /**

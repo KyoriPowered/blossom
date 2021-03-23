@@ -1,46 +1,41 @@
 plugins {
   id 'java'
-  id 'eclipse'
-  id 'idea'
-  id 'maven'
-  id 'net.minecrell.licenser' version '0.4.1'
-  id 'com.gradle.plugin-publish' version '0.10.0'
+  id 'maven-publish'
+  id 'net.kyori.indra' version '1.3.1'
+  id 'net.kyori.indra.license-header' version '1.3.1'
+  id 'com.gradle.plugin-publish' version '0.13.0'
+  id 'java-gradle-plugin'
 }
 
 group 'net.kyori'
 version '1.2.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-configure([compileJava, compileTestJava]) {
-  options.compilerArgs += ['-Xlint:all', '-Xlint:-path']
-  options.deprecation = true
-  options.encoding = 'UTF-8'
-}
-
-javadoc {
-  options.encoding = 'UTF-8'
-  options.charSet = 'UTF-8'
-  options.jFlags('-Xms256m', '-Xmx512m')
-}
-
 repositories {
-  mavenLocal()
   mavenCentral()
-  jcenter()
 }
 
 dependencies {
-  compile gradleApi()
-  compile 'com.google.guava:guava:21.0'
+  implementation 'com.google.guava:guava:21.0'
+
+}
+
+indra {
+  javaVersions {
+    target = 8
+  }
 }
 
 license {
-  header rootProject.file('header.txt')
-  include '**/*.java'
   exclude '**/net/kyori/blossom/task/SourceReplacementTask.java'
-  newLine false
+}
+
+gradlePlugin {
+  plugins {
+    blossom {
+      id = 'net.kyori.blossom'
+      implementationClass = 'net.kyori.blossom.Blossom'
+    }
+  }
 }
 
 pluginBundle {
@@ -51,7 +46,6 @@ pluginBundle {
 
   plugins {
     blossom {
-      id = 'net.kyori.blossom'
       displayName = 'blossom'
     }
   }
