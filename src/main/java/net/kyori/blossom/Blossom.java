@@ -70,11 +70,11 @@ public final class Blossom implements ProjectPlugin {
         task.setTokenReplacementsGlobalLocations(extension.getTokenReplacementsGlobalLocations());
         task.setTokenReplacementsByFile(extension.getTokenReplacementsByFile());
       });
+      this.setupSourceReplacementTasks();
     });
     extensions.create(EXTENSION_NAME, BlossomExtension.class, this);
 
     plugins.apply("java");
-    this.setupSourceReplacementTasks();
   }
 
   private void setupSourceReplacementTasks() {
