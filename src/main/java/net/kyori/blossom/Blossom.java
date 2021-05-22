@@ -23,7 +23,6 @@ package net.kyori.blossom;
 
 import java.io.File;
 import net.kyori.blossom.task.BuiltInSourceReplacementTasks;
-import net.kyori.blossom.task.KotlinSourceReplacementTask;
 import net.kyori.blossom.task.SourceReplacementTask;
 import net.kyori.mammoth.ProjectPlugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -62,19 +61,18 @@ public final class Blossom implements ProjectPlugin {
   ) {
     this.project = project;
 
+    plugins.apply("java");
+
+    final BlossomExtension extension = extensions.create(EXTENSION_NAME, BlossomExtension.class, this);
     project.afterEvaluate(p -> {
-      final BlossomExtension extension = (BlossomExtension) extensions.getByName(EXTENSION_NAME);
+      this.setupSourceReplacementTasks();
       // Configure tasks with extension data
       tasks.withType(SourceReplacementTask.class, task -> {
         task.setTokenReplacementsGlobal(extension.getTokenReplacementsGlobal());
         task.setTokenReplacementsGlobalLocations(extension.getTokenReplacementsGlobalLocations());
         task.setTokenReplacementsByFile(extension.getTokenReplacementsByFile());
       });
-      this.setupSourceReplacementTasks();
     });
-    extensions.create(EXTENSION_NAME, BlossomExtension.class, this);
-
-    plugins.apply("java");
   }
 
   private void setupSourceReplacementTasks() {
@@ -92,7 +90,7 @@ public final class Blossom implements ProjectPlugin {
     }
 
     if(this.project.getPlugins().hasPlugin("kotlin")) {
-      KotlinSourceReplacementTask.setup(this, mainSourceSet);
+      BuiltInSourceReplacementTasks.setupKotlin(this, mainSourceSet);
     }
   }
 
