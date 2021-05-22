@@ -21,6 +21,7 @@
  */
 package net.kyori.blossom;
 
+import java.io.File;
 import net.kyori.blossom.task.BuiltInSourceReplacementTasks;
 import net.kyori.blossom.task.SourceReplacementTask;
 import net.kyori.mammoth.ProjectPlugin;
@@ -34,9 +35,8 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.AbstractCompile;
-
-import java.io.File;
 
 /**
  * The blossom plugin.
@@ -102,14 +102,14 @@ public final class Blossom implements ProjectPlugin {
   public void setupSourceReplacementTask(final String name, final SourceDirectorySet inputSource, final String outputPath, final String compileTaskName) {
     final File outputDirectory = new File(this.project.getBuildDir(), outputPath);
 
-    this.project.getTasks().register(name, SourceReplacementTask.class, sourceReplacementTask -> {
-      sourceReplacementTask.setInput(inputSource);
-      sourceReplacementTask.setOutput(outputDirectory);
+    final TaskProvider<SourceReplacementTask> sourceReplacementTask = this.project.getTasks().register(name, SourceReplacementTask.class, task -> {
+      task.setInput(inputSource);
+      task.setOutput(outputDirectory);
     });
 
-    this.project.getTasks().named(compileTaskName, AbstractCompile.class, compileTask -> {
-      compileTask.dependsOn(name);
-      compileTask.setSource(outputDirectory);
+    this.project.getTasks().named(compileTaskName, AbstractCompile.class, task -> {
+      task.dependsOn(sourceReplacementTask);
+      task.setSource(outputDirectory);
     });
   }
 

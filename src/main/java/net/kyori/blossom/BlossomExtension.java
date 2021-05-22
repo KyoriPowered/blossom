@@ -26,10 +26,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import org.gradle.api.Project;
-
 import java.util.List;
 import java.util.Map;
+import org.gradle.api.Project;
 
 /**
  * The Blossom extension.
@@ -64,7 +63,7 @@ public class BlossomExtension {
   /**
    * Replace a token.
    *
-   * @param token The token
+   * @param token       The token
    * @param replacement The replacement
    */
   public void replaceToken(final Object token, final Object replacement) {
@@ -95,9 +94,9 @@ public class BlossomExtension {
   /**
    * Replace a token in a specific file.
    *
-   * @param token The token
+   * @param token       The token
    * @param replacement The replacement
-   * @param file The file
+   * @param file        The file
    */
   public void replaceToken(final Object token, final Object replacement, final Object file) {
     this.tokenReplacementsByFile.put(file.toString(), ImmutableMap.of(token.toString(), replacement));
