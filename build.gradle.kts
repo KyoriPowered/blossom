@@ -10,7 +10,7 @@ plugins {
 
 group = "net.kyori"
 version = "1.3.0-SNAPSHOT"
-description = "Gradle plugin to perform source code token replacements in Java-based projects"
+description = "Gradle plugin for performing source code token replacements in Java, Kotlin, Scala, and Groovy based projects"
 
 repositories {
   mavenCentral()
@@ -20,6 +20,7 @@ repositories {
 dependencies {
   implementation("net.kyori", "mammoth", "1.0.0")
   implementation("com.google.guava", "guava", "30.1.1-jre")
+  implementation("org.jetbrains.kotlin", "kotlin-gradle-plugin-api", "1.4.31")
   compileOnly("org.checkerframework", "checker-qual", "3.13.0")
 
   checkstyle("ca.stellardrift", "stylecheck", "0.1")

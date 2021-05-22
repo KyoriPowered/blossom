@@ -61,8 +61,11 @@ public final class Blossom implements ProjectPlugin {
   ) {
     this.project = project;
 
+    plugins.apply("java");
+
+    final BlossomExtension extension = extensions.create(EXTENSION_NAME, BlossomExtension.class, this);
     project.afterEvaluate(p -> {
-      final BlossomExtension extension = (BlossomExtension) extensions.getByName(EXTENSION_NAME);
+      this.setupSourceReplacementTasks();
       // Configure tasks with extension data
       tasks.withType(SourceReplacementTask.class, task -> {
         task.setTokenReplacementsGlobal(extension.getTokenReplacementsGlobal());
@@ -70,10 +73,6 @@ public final class Blossom implements ProjectPlugin {
         task.setTokenReplacementsByFile(extension.getTokenReplacementsByFile());
       });
     });
-    extensions.create(EXTENSION_NAME, BlossomExtension.class, this);
-
-    plugins.apply("java");
-    this.setupSourceReplacementTasks();
   }
 
   private void setupSourceReplacementTasks() {
@@ -88,6 +87,10 @@ public final class Blossom implements ProjectPlugin {
 
     if(this.project.getPlugins().hasPlugin("groovy")) {
       BuiltInSourceReplacementTasks.setupGroovy(this, mainSourceSet);
+    }
+
+    if(this.project.getPlugins().hasPlugin("kotlin")) {
+      BuiltInSourceReplacementTasks.setupKotlin(this, mainSourceSet);
     }
   }
 
