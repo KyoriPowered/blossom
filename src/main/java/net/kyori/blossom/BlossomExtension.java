@@ -2,7 +2,7 @@
  * This file is part of blossom, licensed under the GNU Lesser General Public License.
  *
  * Copyright (c) 2015-2016 MiserableNinja
- * Copyright (c) 2018 KyoriPowered
+ * Copyright (c) 2018-2021 KyoriPowered
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,15 +35,28 @@ import java.util.Map;
  * The Blossom extension.
  */
 public class BlossomExtension {
-  /** A collection of replacements to perform globally. */
+  /**
+   * A collection of replacements to perform globally.
+   */
   private final Map<String, Object> tokenReplacementsGlobal = Maps.newHashMap();
-  /** A list of locations to perform global replacements. */
+  /**
+   * A list of locations to perform global replacements.
+   */
   private final List<String> tokenReplacementsGlobalLocations = Lists.newArrayList();
-  /** A collection of replacements to perform for each file. */
+  /**
+   * A collection of replacements to perform for each file.
+   */
   private final Multimap<String, Map<String, Object>> tokenReplacementsByFile = HashMultimap.create();
-  /** The project this extension is for. */
+  /**
+   * The project this extension is for.
+   */
   protected transient Project project;
 
+  /**
+   * Creates a new {@link BlossomExtension}.
+   *
+   * @param blossom blossom instance
+   */
   public BlossomExtension(final Blossom blossom) {
     this.project = blossom.getProject();
   }

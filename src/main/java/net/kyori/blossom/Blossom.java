@@ -2,7 +2,7 @@
  * This file is part of blossom, licensed under the GNU Lesser General Public License.
  *
  * Copyright (c) 2015-2016 MiserableNinja
- * Copyright (c) 2018 KyoriPowered
+ * Copyright (c) 2018-2021 KyoriPowered
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,41 +21,58 @@
  */
 package net.kyori.blossom;
 
-import com.google.common.collect.ImmutableMap;
 import net.kyori.blossom.task.BuiltInSourceReplacementTasks;
 import net.kyori.blossom.task.SourceReplacementTask;
-import org.gradle.api.Plugin;
+import net.kyori.mammoth.ProjectPlugin;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.plugins.Convention;
+import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.compile.AbstractCompile;
 
 import java.io.File;
 
-public final class Blossom implements Plugin<Project> {
-  /** The name of the blossom extension */
+/**
+ * The blossom plugin.
+ */
+public final class Blossom implements ProjectPlugin {
+  /**
+   * The name of the blossom extension.
+   */
   public static final String EXTENSION_NAME = "blossom";
-  /** The current project. */
-  private Project project;
+  /**
+   * The current project.
+   */
+  private @MonotonicNonNull Project project;
 
   @Override
-  public void apply(final Project project) {
+  public void apply(
+    final @NonNull Project project,
+    final @NonNull PluginContainer plugins,
+    final @NonNull ExtensionContainer extensions,
+    final @NonNull Convention convention,
+    final @NonNull TaskContainer tasks
+  ) {
     this.project = project;
 
     project.afterEvaluate(p -> {
-      final BlossomExtension extension = (BlossomExtension) p.getExtensions().getByName(EXTENSION_NAME);
+      final BlossomExtension extension = (BlossomExtension) extensions.getByName(EXTENSION_NAME);
       // Configure tasks with extension data
-      for(final SourceReplacementTask task : p.getTasks().withType(SourceReplacementTask.class)) {
+      tasks.withType(SourceReplacementTask.class, task -> {
         task.setTokenReplacementsGlobal(extension.getTokenReplacementsGlobal());
         task.setTokenReplacementsGlobalLocations(extension.getTokenReplacementsGlobalLocations());
         task.setTokenReplacementsByFile(extension.getTokenReplacementsByFile());
-      }
+      });
     });
-    project.getExtensions().create(EXTENSION_NAME, BlossomExtension.class, this);
+    extensions.create(EXTENSION_NAME, BlossomExtension.class, this);
 
-    this.applyPlugin("java");
+    plugins.apply("java");
     this.setupSourceReplacementTasks();
   }
 
@@ -74,27 +91,29 @@ public final class Blossom implements Plugin<Project> {
     }
   }
 
+  /**
+   * Sets up a source replacement task.
+   *
+   * @param name            name for the task
+   * @param inputSource     input sources
+   * @param outputPath      output path
+   * @param compileTaskName name of compile task
+   */
   public void setupSourceReplacementTask(final String name, final SourceDirectorySet inputSource, final String outputPath, final String compileTaskName) {
     final File outputDirectory = new File(this.project.getBuildDir(), outputPath);
 
-    final SourceReplacementTask replacementTask = this.makeTask(name, SourceReplacementTask.class);
-    replacementTask.setInput(inputSource);
-    replacementTask.setOutput(outputDirectory);
+    this.project.getTasks().register(name, SourceReplacementTask.class, sourceReplacementTask -> {
+      sourceReplacementTask.setInput(inputSource);
+      sourceReplacementTask.setOutput(outputDirectory);
+    });
 
-    final AbstractCompile compileTask = (AbstractCompile) this.project.getTasks().getByName(compileTaskName);
-    compileTask.dependsOn(name);
-    compileTask.setSource(outputDirectory);
+    this.project.getTasks().named(compileTaskName, AbstractCompile.class, compileTask -> {
+      compileTask.dependsOn(name);
+      compileTask.setSource(outputDirectory);
+    });
   }
 
   Project getProject() {
     return this.project;
-  }
-
-  private void applyPlugin(final String plugin) {
-    this.project.apply(ImmutableMap.of("plugin", plugin));
-  }
-
-  private <T extends Task> T makeTask(final String name, final Class<T> type) {
-    return (T) this.project.task(ImmutableMap.of("name", name, "type", type), name);
   }
 }
