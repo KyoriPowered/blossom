@@ -34,7 +34,7 @@ public interface BuiltInSourceReplacementTasks {
   /**
    * Setup the default Java source replacement task.
    *
-   * @param blossom blossom instance
+   * @param blossom       blossom instance
    * @param mainSourceSet source set
    */
   static void setupJava(final Blossom blossom, final SourceSet mainSourceSet) {
@@ -44,7 +44,7 @@ public interface BuiltInSourceReplacementTasks {
   /**
    * Setup the default Scala source replacement task.
    *
-   * @param blossom blossom instance
+   * @param blossom       blossom instance
    * @param mainSourceSet source set
    */
   static void setupScala(final Blossom blossom, final SourceSet mainSourceSet) {
@@ -55,7 +55,7 @@ public interface BuiltInSourceReplacementTasks {
   /**
    * Setup the default Groovy source replacement task.
    *
-   * @param blossom blossom instance
+   * @param blossom       blossom instance
    * @param mainSourceSet source set
    */
   static void setupGroovy(final Blossom blossom, final SourceSet mainSourceSet) {
