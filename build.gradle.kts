@@ -10,7 +10,7 @@ plugins {
 
 group = "net.kyori"
 version = "1.3.0-SNAPSHOT"
-description = "Gradle plugin to perform source code token replacements in Java-based projects"
+description = "Gradle plugin for performing source code token replacements in Java, Kotlin, Scala, and Groovy based projects"
 
 repositories {
   mavenCentral()
