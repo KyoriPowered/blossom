@@ -44,17 +44,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Task for replacing tokens in source code files.
+ */
 public class SourceReplacementTask extends DefaultTask {
-  @Input private final Map<String, Object> tokenReplacementsGlobal = Maps.newHashMap();
-  @Input private final List<String> tokenReplacementsGlobalLocations = Lists.newArrayList();
-  @Input private final Multimap<String, Map<String, Object>> tokenReplacementsByFile = HashMultimap.create();
-  @OutputDirectory File output;
-  @InputFiles private SourceDirectorySet input;
+  private final Map<String, Object> tokenReplacementsGlobal = Maps.newHashMap();
+  private final List<String> tokenReplacementsGlobalLocations = Lists.newArrayList();
+  private final Multimap<String, Map<String, Object>> tokenReplacementsByFile = HashMultimap.create();
+  public /* should be private */ File output;
+  private SourceDirectorySet input;
 
   /**
    * Perform the source replacement task.
    *
-   * @throws IOException
+   * @throws IOException when an {@link IOException} occurs during task execution
    */
   @TaskAction
   public void run() throws IOException {
@@ -94,7 +97,7 @@ public class SourceReplacementTask extends DefaultTask {
         destination.createNewFile();
 
         boolean wasChanged = false;
-        String text = Files.toString(file, Charsets.UTF_8);
+        String text = Files.asCharSource(file, Charsets.UTF_8).read();
 
         if(this.isIncluded(file)) {
           for(final Map.Entry<String, String> entry : globalReplacements.entrySet()) {
@@ -117,7 +120,7 @@ public class SourceReplacementTask extends DefaultTask {
         }
 
         if(wasChanged) {
-          Files.write(text, destination, Charsets.UTF_8);
+          Files.asCharSink(destination, Charsets.UTF_8).write(text);
         } else {
           Files.copy(file, destination);
         }
@@ -145,7 +148,7 @@ public class SourceReplacementTask extends DefaultTask {
    *
    * @param file The file
    * @return <code>true</code> if the file is included in global replacements, otherwise <code>false</code>
-   * @throws IOException
+   * @throws IOException when an {@link IOException} occurs during inclusion checks
    */
   private boolean isIncluded(final File file) throws IOException {
     if(this.tokenReplacementsGlobalLocations.isEmpty()) {
@@ -169,6 +172,7 @@ public class SourceReplacementTask extends DefaultTask {
    *
    * @return The global replacements
    */
+  @SuppressWarnings("unchecked")
   private Map<String, String> resolveReplacementsGlobal() {
     final Map<String, String> result = Maps.newHashMapWithExpectedSize(this.tokenReplacementsGlobal.size());
 
@@ -193,6 +197,7 @@ public class SourceReplacementTask extends DefaultTask {
    *
    * @return The by-file replacements
    */
+  @SuppressWarnings("unchecked")
   private Multimap<String, Map<String, String>> resolveReplacementsByFile() {
     final Multimap<String, Map<String, String>> result = HashMultimap.create();
 
@@ -221,6 +226,7 @@ public class SourceReplacementTask extends DefaultTask {
    *
    * @return The input location
    */
+  @InputFiles
   public SourceDirectorySet getInput() {
     return this.input;
   }
@@ -239,6 +245,7 @@ public class SourceReplacementTask extends DefaultTask {
    *
    * @return The output location
    */
+  @OutputDirectory
   public File getOutput() {
     return this.output;
   }
@@ -257,6 +264,7 @@ public class SourceReplacementTask extends DefaultTask {
    *
    * @return The global token replacements
    */
+  @Input
   public Map<String, Object> getTokenReplacementsGlobal() {
     return this.tokenReplacementsGlobal;
   }
@@ -273,8 +281,9 @@ public class SourceReplacementTask extends DefaultTask {
   /**
    * Get the global token replacement locations.
    *
-   * @return  The global token replacement locations
+   * @return The global token replacement locations
    */
+  @Input
   public List<String> getTokenReplacementsGlobalLocations() {
     return this.tokenReplacementsGlobalLocations;
   }
@@ -293,6 +302,7 @@ public class SourceReplacementTask extends DefaultTask {
    *
    * @return The by-file token replacements
    */
+  @Input
   public Multimap<String, Map<String, Object>> getTokenReplacementsByFile() {
     return this.tokenReplacementsByFile;
   }
@@ -309,11 +319,11 @@ public class SourceReplacementTask extends DefaultTask {
   /**
    * Get the destination for a file.
    *
-   * @param in The file
-   * @param base The base path
+   * @param in      The file
+   * @param base    The base path
    * @param baseOut The base output directory
    * @return The destination file
-   * @throws IOException
+   * @throws IOException when an {@link IOException} occurs attempting to locate the destination
    */
   private static File getDestination(final File in, final File base, final File baseOut) throws IOException {
     return new File(baseOut, in.getCanonicalPath().replace(base.getCanonicalPath(), ""));
