@@ -1,0 +1,42 @@
+metadata:
+  format: { version: 1.0 }
+  polyglot-extensions:
+    - plugins
+
+plugins:
+  com.gradle.plugin-publish: 0.15.0
+  net.kyori.indra: &indra 2.0.5
+  net.kyori.indra.license-header: *indra
+  net.kyori.indra.publishing.gradle-plugin: *indra
+  net.kyori.indra.checkstyle: *indra
+
+versions:
+  mammoth: 1.0.0
+  guava: 30.1.1-jre
+  kotlin: 1.4.31
+  checkerQual: 3.13.0
+  stylecheck: 0.1
+
+dependencies:
+  mammoth:
+    group: net.kyori
+    name: mammoth
+    version: { ref: mammoth }
+  guava:
+    group: com.google.guava
+    name: guava
+    version: { ref: guava }
+  kotlinGradlePluginApi:
+    group: org.jetbrains.kotlin
+    name: kotlin-gradle-plugin-api
+    version: { ref: kotlin }
+  checkerQual:
+    group: org.checkerframework
+    name: checker-qual
+    version: { ref: checkerQual }
+  stylecheck:
+    group: ca.stellardrift
+    name: stylecheck
+    version: { ref: stylecheck }
+
+bundles:
