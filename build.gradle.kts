@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "net.kyori"
-version = "1.3.2-SNAPSHOT"
+version = "2.0.0-SNAPSHOT"
 description = "Gradle plugin for performing source code token replacements in Java, Kotlin, Scala, and Groovy based projects"
 
 repositories {
