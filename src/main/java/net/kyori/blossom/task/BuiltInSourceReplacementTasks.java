@@ -23,8 +23,8 @@ package net.kyori.blossom.task;
 
 import net.kyori.blossom.Blossom;
 import org.gradle.api.internal.plugins.DslObject;
-import org.gradle.api.tasks.GroovySourceSet;
-import org.gradle.api.tasks.ScalaSourceSet;
+import org.gradle.api.tasks.GroovySourceDirectorySet;
+import org.gradle.api.tasks.ScalaSourceDirectorySet;
 import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 
@@ -49,8 +49,8 @@ public interface BuiltInSourceReplacementTasks {
    * @param mainSourceSet source set
    */
   static void setupScala(final Blossom blossom, final SourceSet mainSourceSet) {
-    final ScalaSourceSet set = (ScalaSourceSet) new DslObject(mainSourceSet).getConvention().getPlugins().get("scala");
-    blossom.setupSourceReplacementTask("blossomSourceReplacementScala", set.getScala(), "sources/scala/", mainSourceSet.getCompileTaskName("scala"));
+    final ScalaSourceDirectorySet set = mainSourceSet.getExtensions().getByType(ScalaSourceDirectorySet.class);
+    blossom.setupSourceReplacementTask("blossomSourceReplacementScala", set, "sources/scala/", mainSourceSet.getCompileTaskName("scala"));
   }
 
   /**
@@ -60,8 +60,8 @@ public interface BuiltInSourceReplacementTasks {
    * @param mainSourceSet source set
    */
   static void setupGroovy(final Blossom blossom, final SourceSet mainSourceSet) {
-    final GroovySourceSet set = (GroovySourceSet) new DslObject(mainSourceSet).getConvention().getPlugins().get("groovy");
-    blossom.setupSourceReplacementTask("blossomSourceReplacementGroovy", set.getGroovy(), "sources/groovy/", mainSourceSet.getCompileTaskName("groovy"));
+    final GroovySourceDirectorySet set = mainSourceSet.getExtensions().getByType(GroovySourceDirectorySet.class);
+    blossom.setupSourceReplacementTask("blossomSourceReplacementGroovy", set, "sources/groovy/", mainSourceSet.getCompileTaskName("groovy"));
   }
 
   /**
