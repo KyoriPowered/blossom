@@ -123,7 +123,7 @@ public final class Blossom implements ProjectPlugin {
           sourceFilesField.setAccessible(true);
           final ConfigurableFileCollection sourceFiles = (ConfigurableFileCollection) sourceFilesField.get(task);
           sourceFiles.setFrom(outputDirectory);
-        } catch (final ReflectiveOperationException ex) {
+        } catch(final ReflectiveOperationException ex) {
           throw new RuntimeException(ex);
         }
       }
