@@ -22,12 +22,14 @@
 package net.kyori.blossom;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import net.kyori.blossom.task.BuiltInSourceReplacementTasks;
 import net.kyori.blossom.task.SourceReplacementTask;
 import net.kyori.mammoth.ProjectPlugin;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.ExtensionContainer;
@@ -110,9 +112,21 @@ public final class Blossom implements ProjectPlugin {
       task.setOutput(outputDirectory);
     });
 
-    this.project.getTasks().named(compileTaskName, AbstractCompile.class, task -> {
+    this.project.getTasks().named(compileTaskName, task -> {
       task.dependsOn(sourceReplacementTask);
-      task.setSource(outputDirectory);
+      if(task instanceof AbstractCompile) {
+        ((AbstractCompile) task).setSource(outputDirectory);
+      } else {
+        // Else assume Kotlin
+        try {
+          final Field sourceFilesField = task.getClass().getDeclaredField("sourceFiles");
+          sourceFilesField.setAccessible(true);
+          final ConfigurableFileCollection sourceFiles = (ConfigurableFileCollection) sourceFilesField.get(task);
+          sourceFiles.setFrom(outputDirectory);
+        } catch (final ReflectiveOperationException ex) {
+          throw new RuntimeException(ex);
+        }
+      }
     });
   }
 
