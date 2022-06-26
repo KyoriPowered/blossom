@@ -4,8 +4,8 @@ metadata:
     - plugins
 
 plugins:
-  com.gradle.plugin-publish: 0.15.0
-  net.kyori.indra: &indra 2.0.6
+  com.gradle.plugin-publish: 0.21.0
+  net.kyori.indra: &indra 2.1.1
   net.kyori.indra.license-header: *indra
   net.kyori.indra.publishing.gradle-plugin: *indra
   net.kyori.indra.checkstyle: *indra
@@ -13,8 +13,8 @@ plugins:
 versions:
   mammoth: 1.0.0
   guava: 30.1.1-jre
-  kotlin: 1.4.31
-  checkerQual: 3.17.0
+  kotlin: 1.7.0
+  checkerQual: 3.22.1
   stylecheck: 0.1
 
 dependencies:
