@@ -117,9 +117,10 @@ public final class Blossom implements ProjectPlugin {
       if(task instanceof AbstractCompile) {
         ((AbstractCompile) task).setSource(outputDirectory);
       } else {
-        // Else assume Kotlin
+        // Else assume Kotlin 1.7+
         try {
-          final Field sourceFilesField = task.getClass().getDeclaredField("sourceFiles");
+          final Class<?> abstractKotlinCompileTool = Class.forName("org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool");
+          final Field sourceFilesField = abstractKotlinCompileTool.getDeclaredField("sourceFiles");
           sourceFilesField.setAccessible(true);
           final ConfigurableFileCollection sourceFiles = (ConfigurableFileCollection) sourceFilesField.get(task);
           sourceFiles.setFrom(outputDirectory);
