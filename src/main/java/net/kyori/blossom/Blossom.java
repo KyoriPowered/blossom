@@ -23,6 +23,8 @@ package net.kyori.blossom;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import net.kyori.blossom.task.BuiltInSourceReplacementTasks;
 import net.kyori.blossom.task.SourceReplacementTask;
 import net.kyori.mammoth.ProjectPlugin;
@@ -117,11 +119,11 @@ public final class Blossom implements ProjectPlugin {
       if(task instanceof AbstractCompile) {
         ((AbstractCompile) task).setSource(outputDirectory);
       } else {
-        // Else assume Kotlin
+        // Else assume Kotlin 1.7+
         try {
-          final Field sourceFilesField = task.getClass().getDeclaredField("sourceFiles");
+          final Method sourceFilesField = task.getClass().getMethod("getSources");
           sourceFilesField.setAccessible(true);
-          final ConfigurableFileCollection sourceFiles = (ConfigurableFileCollection) sourceFilesField.get(task);
+          final ConfigurableFileCollection sourceFiles = (ConfigurableFileCollection) sourceFilesField.invoke(task);
           sourceFiles.setFrom(outputDirectory);
         } catch(final ReflectiveOperationException ex) {
           throw new RuntimeException(ex);
