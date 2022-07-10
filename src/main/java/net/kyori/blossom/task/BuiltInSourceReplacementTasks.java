@@ -23,9 +23,7 @@ package net.kyori.blossom.task;
 
 import net.kyori.blossom.Blossom;
 import org.gradle.api.internal.plugins.DslObject;
-import org.gradle.api.tasks.GroovySourceSet;
-import org.gradle.api.tasks.ScalaSourceSet;
-import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.*;
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 
 /**
@@ -73,5 +71,15 @@ public interface BuiltInSourceReplacementTasks {
   static void setupKotlin(final Blossom blossom, final SourceSet mainSourceSet) {
     final KotlinSourceSet set = (KotlinSourceSet) new DslObject(mainSourceSet).getConvention().getPlugins().get("kotlin");
     blossom.setupSourceReplacementTask("blossomSourceReplacementKotlin", set.getKotlin(), "sources/kotlin/", mainSourceSet.getCompileTaskName("kotlin"));
+  }
+
+  /**
+   * Setup the default Resources source replacement task
+   *
+   * @param blossom       blossom instance
+   * @param mainSourceSet source set
+   */
+  static void setupResources(final Blossom blossom, final SourceSet mainSourceSet){
+    blossom.setupSourceReplacementTask("blossomSourceReplacementResources", mainSourceSet.getResources(), "sources/resources/", mainSourceSet.getProcessResourcesTaskName());
   }
 }

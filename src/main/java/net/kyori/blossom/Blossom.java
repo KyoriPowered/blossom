@@ -21,8 +21,6 @@
  */
 package net.kyori.blossom;
 
-import java.io.File;
-import java.lang.reflect.Field;
 import net.kyori.blossom.task.BuiltInSourceReplacementTasks;
 import net.kyori.blossom.task.SourceReplacementTask;
 import net.kyori.mammoth.ProjectPlugin;
@@ -33,12 +31,16 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.ExtensionContainer;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.AbstractCompile;
+import org.gradle.language.jvm.tasks.ProcessResources;
+
+import java.io.File;
+import java.lang.reflect.Field;
 
 /**
  * The blossom plugin.
@@ -62,8 +64,7 @@ public final class Blossom implements ProjectPlugin {
     final @NonNull TaskContainer tasks
   ) {
     this.project = project;
-
-    plugins.apply("java");
+    this.project.getPluginManager().apply("java");
 
     final BlossomExtension extension = extensions.create(EXTENSION_NAME, BlossomExtension.class, this);
     project.afterEvaluate(p -> {
@@ -78,9 +79,10 @@ public final class Blossom implements ProjectPlugin {
   }
 
   private void setupSourceReplacementTasks() {
-    final JavaPluginConvention javaPluginConvention = (JavaPluginConvention) this.project.getConvention().getPlugins().get("java");
+    final JavaPluginExtension javaPluginConvention = (JavaPluginExtension) this.project.getExtensions().getByName("java");
     final SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 
+    BuiltInSourceReplacementTasks.setupResources(this, mainSourceSet);
     BuiltInSourceReplacementTasks.setupJava(this, mainSourceSet);
 
     if(this.project.getPlugins().hasPlugin("scala")) {
@@ -114,24 +116,33 @@ public final class Blossom implements ProjectPlugin {
 
     this.project.getTasks().named(compileTaskName, task -> {
       task.dependsOn(sourceReplacementTask);
-      if(task instanceof AbstractCompile) {
+      if(task instanceof ProcessResources){
+        ProcessResources processResourcesTask = ((ProcessResources) task);
+        processResourcesTask.from(this.project.files(outputDirectory)); // First we add the files from our custom source
+        processResourcesTask.eachFile(file -> { // Now we filter the files
+          if(!file.getFile().getAbsolutePath().contains(outputDirectory.getAbsolutePath())) { // If is not in the custom source we exclude it. (It is safe because we process all the resources)
+            file.exclude();
+          }
+        });
+      } else if(task instanceof AbstractCompile) { // Process any other files
         ((AbstractCompile) task).setSource(outputDirectory);
       } else {
-        // Else assume Kotlin 1.7+
         try {
-          final Class<?> abstractKotlinCompileTool = Class.forName("org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool");
-          final Field sourceFilesField = abstractKotlinCompileTool.getDeclaredField("sourceFiles");
-          sourceFilesField.setAccessible(true);
-          final ConfigurableFileCollection sourceFiles = (ConfigurableFileCollection) sourceFilesField.get(task);
-          sourceFiles.setFrom(outputDirectory);
-        } catch(final ReflectiveOperationException ex) {
-          throw new RuntimeException(ex);
-        }
+            final Class<?> abstractKotlinCompileTool = Class.forName("org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool");
+            if(abstractKotlinCompileTool.isAssignableFrom(task.getClass())) { // Here we check if we're really at the kotlin compile task, to avoid any unwanted issues
+              final Field sourceFilesField = abstractKotlinCompileTool.getDeclaredField("sourceFiles");
+              sourceFilesField.setAccessible(true);
+              final ConfigurableFileCollection sourceFiles = (ConfigurableFileCollection) sourceFilesField.get(task);
+              sourceFiles.setFrom(outputDirectory);
+            }
+          } catch(final ReflectiveOperationException ex) {
+            throw new RuntimeException(ex);
+          }
       }
     });
   }
 
-  Project getProject() {
+  public Project getProject() {
     return this.project;
   }
 }
