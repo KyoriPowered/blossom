@@ -79,8 +79,8 @@ public final class Blossom implements ProjectPlugin {
   }
 
   private void setupSourceReplacementTasks() {
-    final JavaPluginExtension javaPluginConvention = (JavaPluginExtension) this.project.getExtensions().getByName("java");
-    final SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+    final JavaPluginExtension javaPluginExtension = (JavaPluginExtension) this.project.getExtensions().getByName("java");
+    final SourceSet mainSourceSet = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
 
     BuiltInSourceReplacementTasks.setupResources(this, mainSourceSet);
     BuiltInSourceReplacementTasks.setupJava(this, mainSourceSet);
