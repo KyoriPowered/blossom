@@ -27,7 +27,7 @@ dependencies {
 indra {
   javaVersions {
     target(8)
-    testWith(8, 11, 16)
+    testWith(8, 11, 17)
   }
   github("KyoriPowered", "blossom")
 }

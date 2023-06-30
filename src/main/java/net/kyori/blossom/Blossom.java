@@ -31,7 +31,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.SourceDirectorySet;
-import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.PluginContainer;
@@ -58,7 +57,6 @@ public final class Blossom implements ProjectPlugin {
     final @NonNull Project project,
     final @NonNull PluginContainer plugins,
     final @NonNull ExtensionContainer extensions,
-    final @NonNull Convention convention,
     final @NonNull TaskContainer tasks
   ) {
     this.project = project;
