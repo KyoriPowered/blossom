@@ -4,18 +4,18 @@ metadata:
     - plugins
 
 plugins:
-  com.gradle.plugin-publish: 0.21.0
-  net.kyori.indra: &indra 2.1.1
+  com.gradle.plugin-publish: 1.2.0
+  net.kyori.indra: &indra 3.1.2
   net.kyori.indra.license-header: *indra
   net.kyori.indra.publishing.gradle-plugin: *indra
   net.kyori.indra.checkstyle: *indra
 
 versions:
   mammoth: 1.3.1
-  guava: 30.1.1-jre
+  guava: 32.1.1-jre
   kotlin: 1.7.0
-  checkerQual: 3.22.1
-  stylecheck: 0.1
+  checkerQual: 3.36.0
+  stylecheck: 0.2.1
 
 dependencies:
   mammoth:
@@ -38,5 +38,3 @@ dependencies:
     group: ca.stellardrift
     name: stylecheck
     version: { ref: stylecheck }
-
-bundles:
