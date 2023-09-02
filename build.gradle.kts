@@ -1,10 +1,13 @@
+import com.diffplug.gradle.spotless.FormatExtension
+
 plugins {
   id("java-gradle-plugin")
-  id("com.gradle.plugin-publish")
-  id("net.kyori.indra")
-  id("net.kyori.indra.license-header")
-  id("net.kyori.indra.publishing.gradle-plugin")
-  id("net.kyori.indra.checkstyle")
+  alias(libs.plugins.indra)
+  alias(libs.plugins.indra.gradlePluginPublish)
+  alias(libs.plugins.indra.licenserSpotless)
+  alias(libs.plugins.indra.checkstyle)
+  alias(libs.plugins.pluginPublish)
+  alias(libs.plugins.spotless)
 }
 
 group = "net.kyori"
@@ -18,22 +21,25 @@ repositories {
 
 dependencies {
   implementation(libs.mammoth)
-  implementation(libs.guava)
-  implementation(libs.kotlinGradlePluginApi)
-  compileOnly(libs.checkerQual)
+  implementation(libs.pebble)
+  implementation(libs.snakeyamlEngine)
+
+  testImplementation(libs.mammoth.test)
+  testImplementation(platform(libs.junit.bom))
+  testImplementation(libs.junit.api)
+  testRuntimeOnly(libs.junit.engine)
+  testRuntimeOnly(libs.junit.launcher)
+
   checkstyle(libs.stylecheck)
 }
 
 indra {
   javaVersions {
-    target(8)
-    testWith(8, 11, 17)
+    target(11)
+    minimumToolchain(17)
+    testWith(11, 17, 20)
   }
   github("KyoriPowered", "blossom")
-}
-
-license {
-  exclude("**/net/kyori/blossom/task/SourceReplacementTask.java")
 }
 
 indraPluginPublishing {
@@ -45,4 +51,19 @@ indraPluginPublishing {
     listOf("blossom", "replacement")
   )
   website("https://github.com/KyoriPowered/blossom")
+}
+
+spotless {
+  fun FormatExtension.applyCommon() {
+    endWithNewline()
+    indentWithSpaces(2)
+    trimTrailingWhitespace()
+  }
+  java {
+    applyCommon()
+    importOrderFile(rootProject.file(".spotless/kyori.importorder"))
+  }
+  kotlinGradle {
+    applyCommon()
+  }
 }

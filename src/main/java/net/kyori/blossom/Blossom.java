@@ -1,8 +1,7 @@
 /*
  * This file is part of blossom, licensed under the GNU Lesser General Public License.
  *
- * Copyright (c) 2015-2016 MiserableNinja
- * Copyright (c) 2018-2021 KyoriPowered
+ * Copyright (c) 2023 KyoriPowered
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,115 +20,80 @@
  */
 package net.kyori.blossom;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import net.kyori.blossom.task.BuiltInSourceReplacementTasks;
-import net.kyori.blossom.task.SourceReplacementTask;
+import net.kyori.blossom.internal.SourceSetTemplateExtensionImpl;
+import net.kyori.blossom.internal.TemplateSetInternal;
 import net.kyori.mammoth.ProjectPlugin;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.gradle.api.Project;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.file.Directory;
 import org.gradle.api.plugins.ExtensionContainer;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.PluginContainer;
-import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.api.tasks.compile.AbstractCompile;
+import org.gradle.plugins.ide.eclipse.EclipsePlugin;
+import org.gradle.plugins.ide.eclipse.model.EclipseModel;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * The blossom plugin.
+ * A template processor for Gradle projects.
+ *
+ * <p>Uses pebble templates, properties are applied on a sourceset level.</p>
+ *
+ * @since 2.0.0
  */
-public final class Blossom implements ProjectPlugin {
-  /**
-   * The name of the blossom extension.
-   */
-  public static final String EXTENSION_NAME = "blossom";
-  /**
-   * The current project.
-   */
-  private @MonotonicNonNull Project project;
+public class Blossom implements ProjectPlugin {
+
+  private static final String GENERATION_GROUP = "blossom";
+
+  private static final String EXTENSION_NAME = "blossom";
 
   @Override
   public void apply(
-    final @NonNull Project project,
-    final @NonNull PluginContainer plugins,
-    final @NonNull ExtensionContainer extensions,
-    final @NonNull TaskContainer tasks
+    final @NotNull Project project,
+    final @NotNull PluginContainer plugins,
+    final @NotNull ExtensionContainer extensions,
+    final @NotNull TaskContainer tasks
   ) {
-    this.project = project;
+    plugins.withType(JavaBasePlugin.class, $ -> {
+      this.registerGenerateAllTask(plugins, extensions, tasks);
 
-    plugins.apply("java");
+      final SourceSetContainer sourceSets = extensions.getByType(SourceSetContainer.class);
+      sourceSets.all(set -> {
+        final SourceSetTemplateExtension extension = set.getExtensions().create(SourceSetTemplateExtension.class, EXTENSION_NAME, SourceSetTemplateExtensionImpl.class);
+        final Directory baseInputDir = project.getLayout().getProjectDirectory().dir("src/" + set.getName());
+        final Provider<Directory> generatedBase = project.getLayout().getBuildDirectory().dir("generated");
 
-    final BlossomExtension extension = extensions.create(EXTENSION_NAME, BlossomExtension.class, this);
-    project.afterEvaluate(p -> {
-      this.setupSourceReplacementTasks();
-      // Configure tasks with extension data
-      tasks.withType(SourceReplacementTask.class, task -> {
-        task.setTokenReplacementsGlobal(extension.getTokenReplacementsGlobal());
-        task.setTokenReplacementsGlobalLocations(extension.getTokenReplacementsGlobalLocations());
-        task.setTokenReplacementsByFile(extension.getTokenReplacementsByFile());
+        // generate a task for each template set
+        extension.getTemplateSets().all(templateSet -> {
+          final var internal = (TemplateSetInternal) templateSet;
+          final Provider<Directory> templateSetOutput = generatedBase.map(internal::resolveOutputDirectory);
+          final TaskProvider<GenerateTemplates> generateTask = tasks.register(set.getTaskName("generate", templateSet.getName() + "Templates"), GenerateTemplates.class, task -> {
+            task.setGroup(Blossom.GENERATION_GROUP);
+            task.getBaseSet().set(templateSet);
+            task.getSourceDirectory().set(baseInputDir.dir(templateSet.getName() + "-templates"));
+            task.getOutputDir().set(templateSetOutput);
+          });
+
+          // And add the output as a source directory
+          internal.registerOutputWithSet(set, generateTask);
+        });
       });
     });
   }
 
-  private void setupSourceReplacementTasks() {
-    final JavaPluginConvention javaPluginConvention = (JavaPluginConvention) this.project.getConvention().getPlugins().get("java");
-    final SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-
-    BuiltInSourceReplacementTasks.setupJava(this, mainSourceSet);
-
-    if(this.project.getPlugins().hasPlugin("scala")) {
-      BuiltInSourceReplacementTasks.setupScala(this, mainSourceSet);
-    }
-
-    if(this.project.getPlugins().hasPlugin("groovy")) {
-      BuiltInSourceReplacementTasks.setupGroovy(this, mainSourceSet);
-    }
-
-    if(this.project.getPlugins().hasPlugin("kotlin")) {
-      BuiltInSourceReplacementTasks.setupKotlin(this, mainSourceSet);
-    }
-  }
-
-  /**
-   * Sets up a source replacement task.
-   *
-   * @param name            name for the task
-   * @param inputSource     input sources
-   * @param outputPath      output path
-   * @param compileTaskName name of compile task
-   */
-  public void setupSourceReplacementTask(final String name, final SourceDirectorySet inputSource, final String outputPath, final String compileTaskName) {
-    final File outputDirectory = new File(this.project.getBuildDir(), outputPath);
-
-    final TaskProvider<SourceReplacementTask> sourceReplacementTask = this.project.getTasks().register(name, SourceReplacementTask.class, task -> {
-      task.setInput(inputSource);
-      task.setOutput(outputDirectory);
+  private void registerGenerateAllTask(final PluginContainer plugins, final ExtensionContainer extensions, final TaskContainer tasks) {
+    final TaskProvider<?> generateTemplates = tasks.register("generateTemplates", task -> {
+      task.dependsOn(tasks.withType(GenerateTemplates.class));
     });
 
-    this.project.getTasks().named(compileTaskName, task -> {
-      task.dependsOn(sourceReplacementTask);
-      if(task instanceof AbstractCompile) {
-        ((AbstractCompile) task).setSource(outputDirectory);
-      } else {
-        // Else assume Kotlin 1.7+
-        try {
-          final Class<?> abstractKotlinCompileTool = Class.forName("org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool");
-          final Field sourceFilesField = abstractKotlinCompileTool.getDeclaredField("sourceFiles");
-          sourceFilesField.setAccessible(true);
-          final ConfigurableFileCollection sourceFiles = (ConfigurableFileCollection) sourceFilesField.get(task);
-          sourceFiles.setFrom(outputDirectory);
-        } catch(final ReflectiveOperationException ex) {
-          throw new RuntimeException(ex);
-        }
-      }
+    plugins.withType(EclipsePlugin.class, eclipse -> {
+      extensions.getByType(EclipseModel.class).synchronizationTasks(generateTemplates);
     });
-  }
 
-  Project getProject() {
-    return this.project;
+    plugins.withId("org.jetbrains.gradle.plugin.idea-ext", ideaExt -> {
+      // todo
+    });
   }
 }

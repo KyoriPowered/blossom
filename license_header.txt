@@ -1,7 +1,6 @@
 This file is part of blossom, licensed under the GNU Lesser General Public License.
 
-Copyright (c) 2015-2016 MiserableNinja
-Copyright (c) 2018-2021 KyoriPowered
+Copyright (c) 2023 KyoriPowered
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
