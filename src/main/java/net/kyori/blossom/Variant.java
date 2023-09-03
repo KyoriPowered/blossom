@@ -20,15 +20,14 @@
  */
 package net.kyori.blossom;
 
-import javax.inject.Inject;
 import net.kyori.mammoth.Configurable;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
 import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * <p>Composed of:</p>
  * <ul>
- *     <li>Name: not used for anything</li>
+ *     <li>Name: used to map values from properties file</li>
  *     <li>Source files: files that will be loaded</li>
  *     <li>Runtime properties: set in the buildscript, will override anything
  *     set in source files</li>
@@ -44,30 +43,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since 2.0.0
  */
-public class Variant implements Named {
-  private final String name;
-  private final ConfigurableFileCollection sourceFiles;
-  private final MapProperty<String, Object> runtimeProperties;
-
-  /**
-   * Create a new variant (not to be used directly).
-   *
-   * @param name variant name
-   * @param objects injected
-   * @since 2.0.0
-   */
-  @Inject
-  public Variant(final String name, final ObjectFactory objects) {
-    this.name = name;
-    this.sourceFiles = objects.fileCollection();
-    this.runtimeProperties = objects.mapProperty(String.class, Object.class);
-  }
-
+@ApiStatus.NonExtendable
+public interface Variant extends Named {
   @Override
   @Input
-  public @NotNull String getName() {
-    return this.name;
-  }
+  @NotNull String getName();
 
   /**
    * Data files containing template parameters.
@@ -76,9 +56,7 @@ public class Variant implements Named {
    * @since 2.0.0
    */
   @InputFiles
-  public @NotNull ConfigurableFileCollection getDataFiles() {
-    return this.sourceFiles;
-  }
+  @NotNull ConfigurableFileCollection getDataFiles();
 
   /**
    * Runtime properties for inserting into templates.
@@ -87,9 +65,7 @@ public class Variant implements Named {
    * @since 2.0.0
    */
   @Input
-  public @NotNull MapProperty<String, Object> getProperties() {
-    return this.runtimeProperties;
-  }
+  @NotNull MapProperty<String, Object> getProperties();
 
   /**
    * Register multiple properties for this variant.
@@ -97,7 +73,7 @@ public class Variant implements Named {
    * @param configureAction action to configure properties
    * @since 2.0.0
    */
-  public void properties(final @NotNull Action<MapProperty<String, Object>> configureAction) {
-    Configurable.configure(this.runtimeProperties, configureAction);
+  default void properties(final @NotNull Action<MapProperty<String, Object>> configureAction) {
+    Configurable.configure(this.getProperties(), configureAction);
   }
 }

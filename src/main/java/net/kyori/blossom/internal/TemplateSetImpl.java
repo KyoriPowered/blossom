@@ -65,7 +65,7 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
     this.name = name;
     this.dataFiles = this.getObjects().fileCollection();
     this.properties = this.getObjects().mapProperty(String.class, Object.class);
-    this.variants = this.getObjects().domainObjectContainer(Variant.class);
+    this.variants = this.getObjects().domainObjectContainer(Variant.class, n -> this.getObjects().newInstance(VariantImpl.class, n));
     this.header = this.getObjects().property(String.class);
     this.includes = this.getObjects().sourceDirectorySet(name + "-template-includes", name + " template includes");
   }
