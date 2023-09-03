@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since 2.0.0
  */
-public interface SourceSetTemplateExtension {
+public interface BlossomExtension {
   String RESOURCE_TEMPLATE_SET_NAME = "resource";
   String GROOVY_SOURCES_TEMPLATE_SET_NAME = "groovy";
   String JAVA_SOURCES_TEMPLATE_SET_NAME = "java";

@@ -16,7 +16,6 @@ description = "Gradle plugin for performing resource and source code template ex
 
 repositories {
   mavenCentral()
-  gradlePluginPortal()
 }
 
 dependencies {
@@ -38,7 +37,7 @@ indra {
   javaVersions {
     target(11)
     minimumToolchain(17)
-    testWith(11, 17, 20)
+    testWith(11, 17)
   }
   checkstyle(libs.versions.checkstyle.get())
 }

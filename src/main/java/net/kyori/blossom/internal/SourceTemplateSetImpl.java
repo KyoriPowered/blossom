@@ -32,7 +32,8 @@ import org.gradle.api.tasks.TaskProvider;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class SourceTemplateSetImpl extends TemplateSetImpl implements SourceTemplateSet {
-  private Function<SourceSet, SourceDirectorySet> sourceLens;
+  private transient SourceSet pendingDestination;
+  private transient TaskProvider<GenerateTemplates> pendingGenerateTask;
 
   @Inject
   public SourceTemplateSetImpl(final String name) {
@@ -46,11 +47,19 @@ public abstract class SourceTemplateSetImpl extends TemplateSetImpl implements S
 
   @Override
   public void registerOutputWithSet(final SourceSet destination, final TaskProvider<GenerateTemplates> generateTask) {
-    if (this.sourceLens == null) {
-      throw new GradleException("The template set '" + this.getName() + "' in source set '" + destination.getName() + "' has not been configured for any language!");
-    }
+    this.pendingDestination = destination;
+    this.pendingGenerateTask = generateTask;
+  }
 
-    this.sourceLens.apply(destination).srcDir(generateTask.map(GenerateTemplates::getOutputDir));
+  private void applySourceLens(final Function<SourceSet, SourceDirectorySet> lens) {
+    if (this.pendingDestination == null || this.pendingGenerateTask == null) {
+      throw new GradleException("Tried to set a language before this template set has been claimed by the Blossom coordinator (or tried to set a second language!)!");
+    }
+    lens.apply(this.pendingDestination).srcDir(this.pendingGenerateTask.map(GenerateTemplates::getOutputDir));
+
+    // then clear!
+    this.pendingDestination = null;
+    this.pendingGenerateTask = null;
   }
 
   private static Function<SourceSet, SourceDirectorySet> lensForNamedExtension(final String extensionName) {
@@ -66,16 +75,11 @@ public abstract class SourceTemplateSetImpl extends TemplateSetImpl implements S
 
   @Override
   public void java() {
-    this.sourceLens = SourceSet::getJava;
-  }
-
-  @Override
-  public void kotlin() {
-    this.sourceLens = lensForNamedExtension("kotlin");
+    this.applySourceLens(SourceSet::getJava);
   }
 
   @Override
   public void namedLanguageExtension(final @NotNull String name) {
-    this.sourceLens = lensForNamedExtension(name);
+    this.applySourceLens(lensForNamedExtension(name));
   }
 }

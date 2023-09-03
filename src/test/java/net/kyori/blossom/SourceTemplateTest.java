@@ -20,5 +20,44 @@
  */
 package net.kyori.blossom;
 
-public class SourceTemplateTest {
+import java.io.IOException;
+import net.kyori.blossom.test.BlossomDisplayNameGeneration;
+import net.kyori.blossom.test.BlossomFunctionalTest;
+import net.kyori.blossom.test.SettingsFactory;
+import net.kyori.mammoth.test.TestContext;
+import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.TaskOutcome;
+import org.junit.jupiter.api.DisplayNameGeneration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@DisplayNameGeneration(BlossomDisplayNameGeneration.class)
+class SourceTemplateTest {
+  @BlossomFunctionalTest
+  void testSourceSingleSet(final TestContext ctx) throws IOException {
+    SettingsFactory.writeSettings(ctx, "sourceSingleSet");
+    ctx.copyInput("build.gradle");
+    ctx.copyInput("Main.java", "src/main/java/test/Main.java");
+    ctx.copyInput("BuildParameters.java.peb", "src/main/java-templates/test/BuildParameters.java.peb");
+
+    // the java class Main.java reads a field from the generated template
+    final BuildResult result = ctx.build("build");
+
+    assertEquals(TaskOutcome.SUCCESS, result.task(":generateJavaTemplates").getOutcome());
+  }
+
+  @BlossomFunctionalTest
+  void testSourceMultiVariant(final TestContext ctx) throws IOException {
+    SettingsFactory.writeSettings(ctx, "sourceSingleSet");
+    ctx.copyInput("build.gradle");
+    ctx.copyInput("Main.java", "src/main/java/test/Main.java");
+    ctx.copyInput("template-data.yaml");
+    ctx.copyInput("{{ wrapper }}{{ type | capitalize }}Box.java.peb", "src/main/java-templates/test/{{ wrapper }}{{ type | capitalize }}Box.java.peb");
+
+    // the java class Main.java reads a field from the generated template
+    final BuildResult result = ctx.build("build");
+
+    assertEquals(TaskOutcome.SUCCESS, result.task(":generateJavaTemplates").getOutcome());
+
+  }
 }

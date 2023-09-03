@@ -1,0 +1,10 @@
+package test;
+
+{% set name = "#{wrapper}#{type | capitalize}Box" %}
+
+public final class {{ name }} {
+    private {{ name }}() {
+    }
+
+    public static final {{ primitive }} VALUE = 1{{ suffix }};
+}

@@ -21,8 +21,8 @@
 package net.kyori.blossom.internal;
 
 import javax.inject.Inject;
+import net.kyori.blossom.BlossomExtension;
 import net.kyori.blossom.ResourceTemplateSet;
-import net.kyori.blossom.SourceSetTemplateExtension;
 import net.kyori.blossom.SourceTemplateSet;
 import net.kyori.blossom.TemplateSet;
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
@@ -30,11 +30,11 @@ import org.gradle.api.PolymorphicDomainObjectContainer;
 import org.gradle.api.model.ObjectFactory;
 import org.jetbrains.annotations.NotNull;
 
-public class SourceSetTemplateExtensionImpl implements SourceSetTemplateExtension {
+public class BlossomExtensionImpl implements BlossomExtension {
   private final ExtensiblePolymorphicDomainObjectContainer<TemplateSet> templateSets;
 
   @Inject
-  public SourceSetTemplateExtensionImpl(final ObjectFactory objects) {
+  public BlossomExtensionImpl(final ObjectFactory objects) {
     this.templateSets = objects.polymorphicDomainObjectContainer(TemplateSet.class);
     this.templateSets.registerBinding(ResourceTemplateSet.class, ResourceTemplateSetImpl.class);
     this.templateSets.registerBinding(SourceTemplateSet.class, SourceTemplateSetImpl.class);

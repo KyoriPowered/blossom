@@ -4,7 +4,7 @@
   <suppress checks="MethodName"/> <!-- gradle standards trump our own, unfortunately -->
 
   <!-- no javadoc on test classes -->
-  <suppress files="src[\\/]test[\\/]java[\\/].*" checks="FilteringWriteTag|(?:MissingJavadoc.*)|JavadocPackage"/>
+  <suppress files="src[\\/]test[\\/]java\d*[\\/].*" checks="FilteringWriteTag|(?:MissingJavadoc.*)|JavadocPackage"/>
 
   <!-- No JD required in impl or testmod -->
   <suppress files="net[\\/]kyori[\\/]blossom[\\/]internal[\\/].*" checks="FilteringWriteTag|(?:MissingJavadoc.*)|JavadocPackage"/>

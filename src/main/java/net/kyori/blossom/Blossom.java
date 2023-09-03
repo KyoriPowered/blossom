@@ -20,7 +20,7 @@
  */
 package net.kyori.blossom;
 
-import net.kyori.blossom.internal.SourceSetTemplateExtensionImpl;
+import net.kyori.blossom.internal.BlossomExtensionImpl;
 import net.kyori.blossom.internal.TemplateSetInternal;
 import net.kyori.mammoth.ProjectPlugin;
 import org.gradle.api.Project;
@@ -63,7 +63,7 @@ public class Blossom implements ProjectPlugin {
 
       final SourceSetContainer sourceSets = extensions.getByType(SourceSetContainer.class);
       sourceSets.all(set -> {
-        final SourceSetTemplateExtension extension = set.getExtensions().create(SourceSetTemplateExtension.class, EXTENSION_NAME, SourceSetTemplateExtensionImpl.class);
+        final BlossomExtension extension = set.getExtensions().create(BlossomExtension.class, EXTENSION_NAME, BlossomExtensionImpl.class, project.getObjects());
         final Directory baseInputDir = project.getLayout().getProjectDirectory().dir("src/" + set.getName());
         final Provider<Directory> generatedBase = project.getLayout().getBuildDirectory().dir("generated");
 

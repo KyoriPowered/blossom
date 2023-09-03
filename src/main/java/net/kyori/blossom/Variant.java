@@ -29,7 +29,6 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.Nested;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -87,7 +86,7 @@ public class Variant implements Named {
    * @return the properties map
    * @since 2.0.0
    */
-  @Nested
+  @Input
   public @NotNull MapProperty<String, Object> getProperties() {
     return this.runtimeProperties;
   }

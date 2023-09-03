@@ -20,5 +20,49 @@
  */
 package net.kyori.blossom;
 
-public class ResourceTemplateSetTest {
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import net.kyori.blossom.test.BlossomDisplayNameGeneration;
+import net.kyori.blossom.test.BlossomFunctionalTest;
+import net.kyori.blossom.test.SettingsFactory;
+import net.kyori.mammoth.test.TestContext;
+import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.TaskOutcome;
+import org.junit.jupiter.api.DisplayNameGeneration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@DisplayNameGeneration(BlossomDisplayNameGeneration.class)
+class ResourceTemplateSetTest {
+  @BlossomFunctionalTest
+  void testResourceSingleSet(final TestContext ctx) throws IOException {
+    SettingsFactory.writeSettings(ctx, "resourceSingleSet");
+    ctx.copyInput("build.gradle");
+    ctx.copyInput("build-info.properties.peb", "src/main/resource-templates/build-info.properties.peb");
+
+    final BuildResult result = ctx.build("assemble"); // build a jar
+
+    assertEquals(TaskOutcome.SUCCESS, result.task(":generateResourceTemplates").getOutcome());
+
+    final var destPath = ctx.outputDirectory().resolve("build/libs/resourceSingleSet-1.0.3.jar");
+    assertTrue(Files.isRegularFile(destPath), "The expected jar did not exist");
+
+    try (final var jar = new JarFile(destPath.toFile())) {
+      final JarEntry entry = jar.getJarEntry("build-info.properties");
+      assertNotNull(entry, "no build-info.properties in jar");
+      final Properties props = new Properties();
+      try (final InputStream is = jar.getInputStream(entry)) {
+        props.load(is);
+      }
+
+      assertEquals("1.0.3", props.getProperty("version"));
+    }
+  }
+
 }

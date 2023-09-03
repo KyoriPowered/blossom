@@ -1,0 +1,15 @@
+type: potato
+
+variants:
+  float:
+    suffix: "f"
+    primitive: "float"
+    wrapper: "Float"
+  int:
+    suffix: ""
+    primitive: "int"
+    wrapper: "Integer"
+  double:
+    suffix: "d"
+    primitive: "double"
+    wrapper: "Double"

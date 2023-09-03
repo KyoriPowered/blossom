@@ -30,7 +30,7 @@ import net.kyori.mammoth.test.GradleParameters;
 import net.kyori.mammoth.test.TestVariant;
 
 @GradleFunctionalTest
-@GradleParameters({"--warning-mode", "all", "--stacktrace"}) // parameters for all variants
+@GradleParameters({"--warning-mode", "fail", "--stacktrace"}) // parameters for all variants
 @TestVariant(gradleVersion = "7.6.2")
 @TestVariant(gradleVersion = "8.3", extraArguments = {"--configuration-cache"})
 @Documented

@@ -77,7 +77,7 @@ public interface TemplateSet extends Named {
    * @return the properties
    * @since 2.0.0
    */
-  @Nested
+  @Input
   @NotNull MapProperty<String, Object> getProperties();
 
   /**

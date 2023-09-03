@@ -1,0 +1,16 @@
+plugins {
+  id 'net.kyori.blossom'
+  id 'java'
+}
+
+version = "6.6.6"
+
+sourceSets {
+  main {
+    blossom {
+      javaSources {
+        property("version", project.provider { project.version.toString() })
+      }
+    }
+  }
+}
