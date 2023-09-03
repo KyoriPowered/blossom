@@ -67,7 +67,7 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
   // global properties
 
   @Override
-  public @NotNull ConfigurableFileCollection getDataFiles() { // if there are variants, reads per-variant data from a list under `variants`
+  public @NotNull ConfigurableFileCollection getPropertyFiles() { // if there are variants, reads per-variant data from a list under `variants`
     return this.dataFiles;
   }
 

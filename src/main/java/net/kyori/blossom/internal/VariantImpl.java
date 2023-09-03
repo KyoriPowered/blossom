@@ -48,7 +48,7 @@ public class VariantImpl implements Variant {
 
   @Override
   @InputFiles
-  public @NotNull ConfigurableFileCollection getDataFiles() {
+  public @NotNull ConfigurableFileCollection getPropertyFiles() {
     return this.sourceFiles;
   }
 

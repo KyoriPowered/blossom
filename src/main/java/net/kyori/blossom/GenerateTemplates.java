@@ -113,7 +113,7 @@ public abstract class GenerateTemplates extends DefaultTask {
       // global params
       spec.getSetName().set(this.getBaseSet().map(TemplateSet::getName));
       spec.getGlobalParameters().set(this.getBaseSet().flatMap(TemplateSet::getProperties));
-      spec.getGlobalParameterFiles().from(this.getBaseSet().map(TemplateSet::getDataFiles));
+      spec.getGlobalParameterFiles().from(this.getBaseSet().map(TemplateSet::getPropertyFiles));
 
       // variant parameters
       spec.getVariantParameters().set(this.getBaseSet().map(set ->
@@ -125,7 +125,7 @@ public abstract class GenerateTemplates extends DefaultTask {
       spec.getVariantFiles().set(this.getBaseSet().map(set ->
         set.getVariants().getAsMap().entrySet()
           .stream()
-          .collect(Collectors.toMap(Map.Entry::getKey, ent -> ent.getValue().getDataFiles()))
+          .collect(Collectors.toMap(Map.Entry::getKey, ent -> ent.getValue().getPropertyFiles()))
       ));
 
       // general properties

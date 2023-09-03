@@ -58,7 +58,7 @@ public interface TemplateSet extends Named {
    * @since 2.0.0
    */
   @InputFiles
-  @NotNull ConfigurableFileCollection getDataFiles();
+  @NotNull ConfigurableFileCollection getPropertyFiles();
 
   /**
    * Add a data file for variable data.
@@ -66,8 +66,8 @@ public interface TemplateSet extends Named {
    * @param dataFile the data file to add, evaluated as per {@link org.gradle.api.Project#file(Object)}
    * @since 2.0.0
    */
-  default void dataFile(final @NotNull Object dataFile) {
-    this.getDataFiles().from(dataFile);
+  default void propertyFile(final @NotNull Object dataFile) {
+    this.getPropertyFiles().from(dataFile);
   }
 
   /**

@@ -56,7 +56,7 @@ public interface Variant extends Named {
    * @since 2.0.0
    */
   @InputFiles
-  @NotNull ConfigurableFileCollection getDataFiles();
+  @NotNull ConfigurableFileCollection getPropertyFiles();
 
   /**
    * Runtime properties for inserting into templates.
