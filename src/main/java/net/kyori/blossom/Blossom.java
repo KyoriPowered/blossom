@@ -21,10 +21,12 @@
 package net.kyori.blossom;
 
 import net.kyori.blossom.internal.BlossomExtensionImpl;
+import net.kyori.blossom.internal.IdeConfigurer;
 import net.kyori.blossom.internal.TemplateSetInternal;
 import net.kyori.mammoth.ProjectPlugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.Directory;
+import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.PluginContainer;
@@ -32,11 +34,13 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.plugins.ide.eclipse.EclipsePlugin;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
+import org.gradle.plugins.ide.idea.model.IdeaModel;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.gradle.ext.ProjectSettings;
+import org.jetbrains.gradle.ext.TaskTriggersConfig;
 
 /**
  * A template processor for Gradle projects.
@@ -59,7 +63,7 @@ public class Blossom implements ProjectPlugin {
     final @NotNull TaskContainer tasks
   ) {
     plugins.withType(JavaBasePlugin.class, $ -> {
-      this.registerGenerateAllTask(plugins, extensions, tasks);
+      this.registerGenerateAllTask(project, tasks);
 
       final SourceSetContainer sourceSets = extensions.getByType(SourceSetContainer.class);
       sourceSets.all(set -> {
@@ -86,17 +90,21 @@ public class Blossom implements ProjectPlugin {
     });
   }
 
-  private void registerGenerateAllTask(final PluginContainer plugins, final ExtensionContainer extensions, final TaskContainer tasks) {
+  private void registerGenerateAllTask(final Project project, final TaskContainer tasks) {
     final TaskProvider<?> generateTemplates = tasks.register("generateTemplates", task -> {
       task.dependsOn(tasks.withType(GenerateTemplates.class));
     });
 
-    plugins.withType(EclipsePlugin.class, eclipse -> {
-      extensions.getByType(EclipseModel.class).synchronizationTasks(generateTemplates);
-    });
+    IdeConfigurer.apply(project, new IdeConfigurer.IdeImportAction() {
+      @Override
+      public void idea(final @NotNull Project project, final @NotNull IdeaModel idea, final @NotNull ProjectSettings ideaExtension) {
+        ((ExtensionAware) ideaExtension).getExtensions().getByType(TaskTriggersConfig.class).afterSync(generateTemplates);
+      }
 
-    plugins.withId("org.jetbrains.gradle.plugin.idea-ext", ideaExt -> {
-      // todo
+      @Override
+      public void eclipse(final @NotNull Project project, final @NotNull EclipseModel eclipse) {
+        eclipse.synchronizationTasks(generateTemplates);
+      }
     });
   }
 

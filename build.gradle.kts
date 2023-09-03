@@ -16,12 +16,14 @@ description = "Gradle plugin for performing resource and source code template ex
 
 repositories {
   mavenCentral()
+  gradlePluginPortal()
 }
 
 dependencies {
   implementation(libs.mammoth)
   implementation(libs.pebble)
   implementation(libs.snakeyamlEngine)
+  compileOnly(libs.ideaExtPlugin)
 
   testImplementation(libs.mammoth.test)
   testImplementation(platform(libs.junit.bom))
