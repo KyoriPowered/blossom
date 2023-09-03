@@ -23,6 +23,7 @@ package net.kyori.blossom.internal;
 import javax.inject.Inject;
 import net.kyori.blossom.ResourceTemplateSet;
 import net.kyori.blossom.SourceSetTemplateExtension;
+import net.kyori.blossom.SourceTemplateSet;
 import net.kyori.blossom.TemplateSet;
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
 import org.gradle.api.PolymorphicDomainObjectContainer;
@@ -36,6 +37,7 @@ public class SourceSetTemplateExtensionImpl implements SourceSetTemplateExtensio
   public SourceSetTemplateExtensionImpl(final ObjectFactory objects) {
     this.templateSets = objects.polymorphicDomainObjectContainer(TemplateSet.class);
     this.templateSets.registerBinding(ResourceTemplateSet.class, ResourceTemplateSetImpl.class);
+    this.templateSets.registerBinding(SourceTemplateSet.class, SourceTemplateSetImpl.class);
   }
 
   @Override

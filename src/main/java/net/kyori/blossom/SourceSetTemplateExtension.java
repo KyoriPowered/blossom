@@ -30,10 +30,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Templating that applies to a specific source set.
  *
+ * <p>Each template set registered will by default read templates from {@code src/<set/>/<template-set-name>-templates/}</p>
+ *
  * @since 2.0.0
  */
 public interface SourceSetTemplateExtension {
   String RESOURCE_TEMPLATE_SET_NAME = "resource";
+  String GROOVY_SOURCES_TEMPLATE_SET_NAME = "groovy";
+  String JAVA_SOURCES_TEMPLATE_SET_NAME = "java";
+  String KOTLIN_SOURCES_TEMPLATE_SET_NAME = "kotlin";
+  String SCALA_SOURCES_TEMPLATE_SET_NAME = "scala";
 
   /**
    * Register a single primary template set for resource templates.
@@ -59,7 +65,109 @@ public interface SourceSetTemplateExtension {
     this.resources().configure(Objects.requireNonNull(configureAction, "configureAction"));
   }
 
-  // batches, at src/<set>/templates/<batch>
+  private NamedDomainObjectProvider<SourceTemplateSet> registerSourceTemplateSet(final String name, final Action<SourceTemplateSet> setLanguageChooser) {
+    if (this.getTemplateSets().getNames().contains(name)) {
+      return this.getTemplateSets().named(name, SourceTemplateSet.class);
+    } else {
+      return this.getTemplateSets().register(name, SourceTemplateSet.class, setLanguageChooser);
+    }
+  }
+
+  /**
+   * Register a single primary template set for Groovy source templates named {@value #GROOVY_SOURCES_TEMPLATE_SET_NAME}.
+   *
+   * <p>Templates will, by default be read from the <code>src/&lt;set-name>/{@value #GROOVY_SOURCES_TEMPLATE_SET_NAME}-templates</code> folder.</p>
+   *
+   * @return the groovy source template set.
+   * @since 2.0.0
+   */
+  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> groovySources() {
+    return this.registerSourceTemplateSet(GROOVY_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::groovy);
+  }
+
+  /**
+   * Register and configure a single primary template set for Groovy source templates named {@value #GROOVY_SOURCES_TEMPLATE_SET_NAME}.
+   *
+   * <p>Templates will, by default be read from the <code>src/&lt;set-name>/{@value #GROOVY_SOURCES_TEMPLATE_SET_NAME}-templates</code> folder.</p>
+   *
+   * @param configureAction the action to configure the set with
+   * @since 2.0.0
+   */
+  default void groovySources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
+    this.registerSourceTemplateSet(GROOVY_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::groovy).configure(Objects.requireNonNull(configureAction, "configureAction"));
+  }
+
+  /**
+   * Register a single primary template set for Java source templates named {@value #JAVA_SOURCES_TEMPLATE_SET_NAME}.
+   *
+   * <p>Templates will, by default be read from the <code>src/&lt;set-name>/{@value #JAVA_SOURCES_TEMPLATE_SET_NAME}-templates</code> folder.</p>
+   *
+   * @return the java source template set.
+   * @since 2.0.0
+   */
+  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> javaSources() {
+    return this.registerSourceTemplateSet(JAVA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::java);
+  }
+
+  /**
+   * Register and configure a single primary template set for Java source templates named {@value #JAVA_SOURCES_TEMPLATE_SET_NAME}.
+   *
+   * <p>Templates will, by default be read from the <code>src/&lt;set-name>/{@value #JAVA_SOURCES_TEMPLATE_SET_NAME}-templates</code> folder.</p>
+   *
+   * @param configureAction the action to configure the set with
+   * @since 2.0.0
+   */
+  default void javaSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
+    this.registerSourceTemplateSet(JAVA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::java).configure(Objects.requireNonNull(configureAction, "configureAction"));
+  }
+
+  /**
+   * Register a single primary template set for Kotlin source templates named {@value #KOTLIN_SOURCES_TEMPLATE_SET_NAME}.
+   *
+   * <p>Templates will, by default be read from the <code>src/&lt;set-name>/{@value #KOTLIN_SOURCES_TEMPLATE_SET_NAME}-templates</code> folder.</p>
+   *
+   * @return the kotlin source template set.
+   * @since 2.0.0
+   */
+  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> kotlinSources() {
+    return this.registerSourceTemplateSet(KOTLIN_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::kotlin);
+  }
+
+  /**
+   * Register and configure a single primary template set for Kotlin source templates named {@value #KOTLIN_SOURCES_TEMPLATE_SET_NAME}.
+   *
+   * <p>Templates will, by default be read from the <code>src/&lt;set-name>/{@value #KOTLIN_SOURCES_TEMPLATE_SET_NAME}-templates</code> folder.</p>
+   *
+   * @param configureAction the action to configure the set with
+   * @since 2.0.0
+   */
+  default void kotlinSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
+    this.registerSourceTemplateSet(KOTLIN_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::kotlin).configure(Objects.requireNonNull(configureAction, "configureAction"));
+  }
+
+  /**
+   * Register a single primary template set for Scala source templates named {@value #SCALA_SOURCES_TEMPLATE_SET_NAME}.
+   *
+   * <p>Templates will, by default be read from the <code>src/&lt;set-name>/{@value #SCALA_SOURCES_TEMPLATE_SET_NAME}-templates</code> folder.</p>
+   *
+   * @return the scala source template set.
+   * @since 2.0.0
+   */
+  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> scalaSources() {
+    return this.registerSourceTemplateSet(SCALA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::scala);
+  }
+
+  /**
+   * Register and configure a single primary template set for Scala source templates named {@value #SCALA_SOURCES_TEMPLATE_SET_NAME}.
+   *
+   * <p>Templates will, by default be read from the <code>src/&lt;set-name>/{@value #SCALA_SOURCES_TEMPLATE_SET_NAME}-templates</code> folder.</p>
+   *
+   * @param configureAction the action to configure the set with
+   * @since 2.0.0
+   */
+  default void scalaSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
+    this.registerSourceTemplateSet(SCALA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::scala).configure(Objects.requireNonNull(configureAction, "configureAction"));
+  }
 
   /**
    * Get all currently registered template sets for this source set.

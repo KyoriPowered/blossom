@@ -1,0 +1,9 @@
+plugins {
+  id 'net.kyori.blossom'
+}
+
+blossom {
+  resources {
+
+  }
+}

@@ -28,6 +28,7 @@ import org.gradle.api.NamedDomainObjectSet;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Internal;
@@ -59,6 +60,16 @@ public interface TemplateSet extends Named {
   @NotNull ConfigurableFileCollection getDataFiles();
 
   /**
+   * Add a data file for variable data.
+   *
+   * @param dataFile the data file to add, evaluated as per {@link org.gradle.api.Project#file(Object)}
+   * @since 2.0.0
+   */
+  default void dataFile(final @NotNull Object dataFile) {
+    this.getDataFiles().from(dataFile);
+  }
+
+  /**
    * Runtime-defined properties.
    *
    * <p>These properties will override anything in the data files.</p>
@@ -68,6 +79,28 @@ public interface TemplateSet extends Named {
    */
   @Nested
   @NotNull MapProperty<String, Object> getProperties();
+
+  /**
+   * Set a single property for this template.
+   *
+   * @param property the property
+   * @param value the value for the property
+   * @since 2.0.0
+   */
+  default void property(final String property, final String value) {
+    this.getProperties().put(property, value);
+  }
+
+  /**
+   * Set a single property for this template.
+   *
+   * @param property the property
+   * @param value the provider providing a value for the property
+   * @since 2.0.0
+   */
+  default void property(final String property, final Provider<String> value) {
+    this.getProperties().put(property, value);
+  }
 
   /**
    * A literal header to insert at the top of generated source files.

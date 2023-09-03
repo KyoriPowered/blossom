@@ -18,12 +18,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  * USA
  */
-package net.kyori.blossom;
+package net.kyori.blossom.test;
 
-/**
- * A template set for Java sources.
- *
- * @since 2.0.0
- */
-public interface JavaTemplateSet extends TemplateSet {
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import net.kyori.mammoth.test.GradleFunctionalTest;
+import net.kyori.mammoth.test.GradleParameters;
+import net.kyori.mammoth.test.TestVariant;
+
+@GradleFunctionalTest
+@GradleParameters({"--warning-mode", "all", "--stacktrace"}) // parameters for all variants
+@TestVariant(gradleVersion = "7.6.2")
+@TestVariant(gradleVersion = "8.3", extraArguments = {"--configuration-cache"})
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+public @interface BlossomFunctionalTest {
+
 }

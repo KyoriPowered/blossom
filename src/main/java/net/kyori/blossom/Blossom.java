@@ -34,7 +34,9 @@ import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.plugins.ide.eclipse.EclipsePlugin;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
+import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A template processor for Gradle projects.
@@ -95,5 +97,10 @@ public class Blossom implements ProjectPlugin {
     plugins.withId("org.jetbrains.gradle.plugin.idea-ext", ideaExt -> {
       // todo
     });
+  }
+
+  @Override
+  public @Nullable GradleVersion minimumGradleVersion() {
+    return GradleVersion.version("7.2");
   }
 }

@@ -18,29 +18,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  * USA
  */
-package net.kyori.blossom.internal;
+package net.kyori.blossom.test;
 
-import javax.inject.Inject;
-import net.kyori.blossom.GenerateTemplates;
-import net.kyori.blossom.JavaTemplateSet;
-import org.gradle.api.file.Directory;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.TaskProvider;
+import java.io.IOException;
+import net.kyori.mammoth.test.TestContext;
 
-public abstract class JavaTemplateSetImpl extends TemplateSetImpl implements JavaTemplateSet {
-
-  @Inject
-  public JavaTemplateSetImpl(final String name) {
-    super(name);
+public final class SettingsFactory {
+  private SettingsFactory() {
   }
 
-  @Override
-  public Directory resolveOutputDirectory(final Directory generatedDir) {
-    return generatedDir.dir("sources/blossom-" + this.getName());
-  }
-
-  @Override
-  public void registerOutputWithSet(final SourceSet destination, final TaskProvider<GenerateTemplates> generateTask) {
-    destination.getJava().srcDir(generateTask.map(GenerateTemplates::getOutputDir));
+  public static void writeSettings(final TestContext ctx, final String projectName) throws IOException {
+    ctx.writeText("settings.gradle",
+      "rootProject.name = '" + projectName + "'\n");
   }
 }

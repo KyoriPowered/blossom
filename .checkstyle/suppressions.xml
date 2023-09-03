@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suppressions PUBLIC "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN" "http://checkstyle.org/dtds/suppressions_1_2.dtd">
 <suppressions>
+  <suppress checks="MethodName"/> <!-- gradle standards trump our own, unfortunately -->
+
   <!-- no javadoc on test classes -->
-  <suppress files="src[\\/]test[\\/]java[\\/].*" checks="FilteringWriteTag"/>
-  <suppress files="src[\\/]test[\\/]java[\\/].*" checks="MissingJavadoc.*"/>
-  <suppress checks="MethodName"/>
+  <suppress files="src[\\/]test[\\/]java[\\/].*" checks="FilteringWriteTag|(?:MissingJavadoc.*)|JavadocPackage"/>
 
   <!-- No JD required in impl or testmod -->
   <suppress files="net[\\/]kyori[\\/]blossom[\\/]internal[\\/].*" checks="FilteringWriteTag|(?:MissingJavadoc.*)|JavadocPackage"/>
