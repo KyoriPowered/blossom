@@ -26,6 +26,7 @@ import io.pebbletemplates.pebble.loader.FileLoader;
 import io.pebbletemplates.pebble.loader.Loader;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -34,8 +35,9 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -43,11 +45,12 @@ import net.kyori.blossom.internal.TemplateSetInternal;
 import net.kyori.mammoth.Properties;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.InvalidUserDataException;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
-import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.jetbrains.annotations.NotNull;
@@ -74,12 +77,13 @@ public abstract class GenerateTemplates extends DefaultTask {
   /**
    * Files that can be included in templates, but that are not themselves templates.
    *
+   * <p>Derived from the TemplateSet.</p>
+   *
    * @return the files to include
    * @since 2.0.0
    */
-  @InputDirectory
-  @Optional
-  public abstract @NotNull DirectoryProperty getIncludesDirectory(); // for files that can be included but are not themselves evaluated
+  @InputFiles
+  protected abstract @NotNull ConfigurableFileCollection getIncludesDirectories();
 
   /**
    * Source directory for templates to process.
@@ -99,6 +103,15 @@ public abstract class GenerateTemplates extends DefaultTask {
   @OutputDirectory
   public abstract @NotNull DirectoryProperty getOutputDir();
 
+  /**
+   * Create a new task (NOT to be called directly).
+   *
+   * @since 2.0.0
+   */
+  public GenerateTemplates() {
+    this.getIncludesDirectories().from(this.getBaseSet().map(set -> set.getIncludes().getSourceDirectories()));
+  }
+
   @TaskAction
   void generate() throws IOException {
     final Path sourceDirectory = this.getSourceDirectory().get().getAsFile().toPath();
@@ -106,10 +119,14 @@ public abstract class GenerateTemplates extends DefaultTask {
     sourceLoader.setPrefix(sourceDirectory.toAbsolutePath().toString());
     final Loader<?> loader;
 
-    if (this.getIncludesDirectory().isPresent()) {
-      final Loader<?> includesLoader = new FileLoader();
-      includesLoader.setPrefix(this.getIncludesDirectory().get().getAsFile().getAbsolutePath());
-      loader = new DelegatingLoader(Arrays.asList(sourceLoader, includesLoader));
+    if (!this.getIncludesDirectories().isEmpty()) {
+      final List<Loader<?>> loaders = new ArrayList<>(2);
+      loaders.add(sourceLoader);
+      for (final File includesDir : this.getIncludesDirectories().getFiles()) {
+        final Loader<?> includesLoader = new FileLoader();
+        includesLoader.setPrefix(includesDir.getAbsolutePath());
+      }
+      loader = new DelegatingLoader(loaders);
     } else {
       loader = sourceLoader;
     }

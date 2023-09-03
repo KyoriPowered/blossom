@@ -26,6 +26,7 @@ import org.gradle.api.Named;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.NamedDomainObjectSet;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
@@ -145,5 +146,25 @@ public interface TemplateSet extends Named {
    */
   default void variants(final @NotNull Action<NamedDomainObjectSet<Variant>> configureAction) {
     Configurable.configure(this.getVariants(), configureAction);
+  }
+
+  /**
+   * Directories providing templates which can be included into process templates, but which will not be processed for output themselves.
+   *
+   * @return the includes directories
+   * @since 2.0.0
+   */
+  @Internal
+  @NotNull SourceDirectorySet getIncludes();
+
+  /**
+   * Add includes directories to the template path.
+   *
+   * @param includes the includes directories to add, processed as in {@link org.gradle.api.Project#files(Object...)}
+   * @see #getIncludes()
+   * @since 2.0.0
+   */
+  default void include(final @NotNull Object@NotNull... includes) {
+    this.getIncludes().srcDirs(includes);
   }
 }

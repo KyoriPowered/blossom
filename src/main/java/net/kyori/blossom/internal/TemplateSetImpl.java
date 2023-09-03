@@ -37,6 +37,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
@@ -56,6 +57,7 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
   private final MapProperty<String, Object> properties;
   private final NamedDomainObjectContainer<Variant> variants;
   private final Property<String> header;
+  private transient final SourceDirectorySet includes;
   private final String name;
 
   @Inject
@@ -65,6 +67,7 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
     this.properties = this.getObjects().mapProperty(String.class, Object.class);
     this.variants = this.getObjects().domainObjectContainer(Variant.class);
     this.header = this.getObjects().property(String.class);
+    this.includes = this.getObjects().sourceDirectorySet(name + "-template-includes", name + " template includes");
   }
 
   @Inject
@@ -90,6 +93,11 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
   @Override
   public @NotNull Property<String> getHeader() {
     return this.header;
+  }
+
+  @Override
+  public @NotNull SourceDirectorySet getIncludes() {
+    return this.includes;
   }
 
   // variant
