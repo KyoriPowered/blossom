@@ -1,0 +1,17 @@
+name: "Run tests against latest Gradle RC/nightly"
+
+on:
+  schedule:
+    - cron: '3 1 * * 5'
+  workflow_dispatch:
+    inputs:
+      gradle-version:
+        description: "A specific Gradle version to test against"
+        default: "-"
+        required: false
+jobs:
+  build:
+    uses: KyoriPowered/.github/.github/workflows/shared-test-gradle-rc.yaml@trunk
+    with:
+      gradle_version: "${{ inputs.gradle-version }}"
+      injected_version_path: 'src/test/resources/'

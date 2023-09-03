@@ -28,11 +28,13 @@ import java.lang.annotation.Target;
 import net.kyori.mammoth.test.GradleFunctionalTest;
 import net.kyori.mammoth.test.GradleParameters;
 import net.kyori.mammoth.test.TestVariant;
+import net.kyori.mammoth.test.TestVariantResource;
 
 @GradleFunctionalTest
 @GradleParameters({"--warning-mode", "fail", "--stacktrace"}) // parameters for all variants
 @TestVariant(gradleVersion = "7.6.2")
 @TestVariant(gradleVersion = "8.3", extraArguments = {"--configuration-cache"})
+@TestVariantResource(value = "/injected-gradle-versions", optional = true)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
