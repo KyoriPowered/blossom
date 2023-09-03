@@ -149,6 +149,27 @@ public interface TemplateSet extends Named {
   }
 
   /**
+   * Directories containing templates.
+   *
+   * <p>All templates share a common namespace, so templates in directories that come first will override templates that come later.</p>
+   *
+   * @return the templates to process
+   * @since 2.0.0
+   */
+  @Internal
+  @NotNull SourceDirectorySet getTemplates();
+
+  /**
+   * Add one or more directories containing templates.
+   *
+   * @param templates the template directories to add, evaluated following {@link org.gradle.api.Project#files(Object...)}
+   * @since 2.0.0
+   */
+  default void templates(final @NotNull Object@NotNull... templates) {
+    this.getTemplates().srcDirs(templates);
+  }
+
+  /**
    * Directories providing templates which can be included into process templates, but which will not be processed for output themselves.
    *
    * @return the includes directories

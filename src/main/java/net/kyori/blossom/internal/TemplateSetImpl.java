@@ -58,6 +58,7 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
   private final NamedDomainObjectContainer<Variant> variants;
   private final Property<String> header;
   private transient final SourceDirectorySet includes;
+  private transient final SourceDirectorySet templates;
   private final String name;
 
   @Inject
@@ -68,6 +69,7 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
     this.variants = this.getObjects().domainObjectContainer(Variant.class, n -> this.getObjects().newInstance(VariantImpl.class, n));
     this.header = this.getObjects().property(String.class);
     this.includes = this.getObjects().sourceDirectorySet(name + "-template-includes", name + " template includes");
+    this.templates = this.getObjects().sourceDirectorySet(name + "-templates", name + " templates");
   }
 
   @Inject
@@ -98,6 +100,11 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
   @Override
   public @NotNull SourceDirectorySet getIncludes() {
     return this.includes;
+  }
+
+  @Override
+  public @NotNull SourceDirectorySet getTemplates() {
+    return this.templates;
   }
 
   // variant

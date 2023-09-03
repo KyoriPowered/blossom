@@ -22,7 +22,6 @@ package net.kyori.blossom.internal;
 
 import javax.inject.Inject;
 import net.kyori.blossom.Variant;
-import org.gradle.api.Action;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
@@ -35,13 +34,6 @@ public class VariantImpl implements Variant {
   private final ConfigurableFileCollection sourceFiles;
   private final MapProperty<String, Object> runtimeProperties;
 
-  /**
-   * Create a new variant (not to be used directly).
-   *
-   * @param name variant name
-   * @param objects injected
-   * @since 2.0.0
-   */
   @Inject
   public VariantImpl(final String name, final ObjectFactory objects) {
     this.name = name;
@@ -64,9 +56,5 @@ public class VariantImpl implements Variant {
   @Input
   public @NotNull MapProperty<String, Object> getProperties() {
     return this.runtimeProperties;
-  }
-
-  @Override
-  public void properties(final @NotNull Action<MapProperty<String, Object>> configureAction) {
   }
 }

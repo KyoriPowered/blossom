@@ -71,12 +71,13 @@ public class Blossom implements ProjectPlugin {
         extension.getTemplateSets().all(templateSet -> {
           final var internal = (TemplateSetInternal) templateSet;
           final Provider<Directory> templateSetOutput = generatedBase.map(internal::resolveOutputDirectory);
+          internal.templates(baseInputDir.dir(templateSet.getName() + "-templates"));
+          internal.getTemplates().getDestinationDirectory().set(templateSetOutput);
           final TaskProvider<GenerateTemplates> generateTask = tasks.register(set.getTaskName("generate", templateSet.getName() + "Templates"), GenerateTemplates.class, task -> {
             task.setGroup(Blossom.GENERATION_GROUP);
             task.getBaseSet().set(templateSet);
-            task.getSourceDirectory().set(baseInputDir.dir(templateSet.getName() + "-templates"));
-            task.getOutputDir().set(templateSetOutput);
           });
+          internal.getTemplates().compiledBy(generateTask, GenerateTemplates::getOutputDir);
 
           // And add the output as a source directory
           internal.registerOutputWithSet(set, generateTask);

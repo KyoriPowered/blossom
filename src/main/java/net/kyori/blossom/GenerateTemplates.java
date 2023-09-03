@@ -44,14 +44,15 @@ import java.util.Set;
 import net.kyori.blossom.internal.TemplateSetInternal;
 import net.kyori.mammoth.Properties;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,8 +92,9 @@ public abstract class GenerateTemplates extends DefaultTask {
    * @return the source directory
    * @since 2.0.0
    */
-  @InputDirectory
-  public abstract @NotNull DirectoryProperty getSourceDirectory();
+  @InputFiles
+  @SkipWhenEmpty
+  protected abstract @NotNull ConfigurableFileCollection getSourceDirectories();
 
   /**
    * Destination directory for template output.
@@ -110,29 +112,63 @@ public abstract class GenerateTemplates extends DefaultTask {
    */
   public GenerateTemplates() {
     this.getIncludesDirectories().from(this.getBaseSet().map(set -> set.getIncludes().getSourceDirectories()));
+    this.getSourceDirectories().from(this.getBaseSet().map(set -> set.getTemplates().getSourceDirectories()));
   }
 
-  @TaskAction
-  void generate() throws IOException {
-    final Path sourceDirectory = this.getSourceDirectory().get().getAsFile().toPath();
-    final Loader<?> sourceLoader = new FileLoader();
-    sourceLoader.setPrefix(sourceDirectory.toAbsolutePath().toString());
-    final Loader<?> loader;
+  private Loader<?> makeLoader() {
+    final List<Loader<?>> loaders = new ArrayList<>();
+    for (final File sourceDir : this.getSourceDirectories().getFiles()) {
+      final Loader<?> sourceLoader = new FileLoader();
+      sourceLoader.setPrefix(sourceDir.getAbsolutePath());
+      loaders.add(sourceLoader);
+    }
 
     if (!this.getIncludesDirectories().isEmpty()) {
-      final List<Loader<?>> loaders = new ArrayList<>(2);
-      loaders.add(sourceLoader);
       for (final File includesDir : this.getIncludesDirectories().getFiles()) {
         final Loader<?> includesLoader = new FileLoader();
         includesLoader.setPrefix(includesDir.getAbsolutePath());
       }
-      loader = new DelegatingLoader(loaders);
-    } else {
-      loader = sourceLoader;
     }
 
+    switch (loaders.size()) {
+      case 0: throw new GradleException("No sources directories declared!");
+      case 1: return loaders.get(0);
+      default: return new DelegatingLoader(loaders);
+    }
+  }
+
+  private Set<String> collectTemplateNames() {
+    final Set<String> templateNames = new HashSet<>();
+    for (final File sourceDir : this.getSourceDirectories().getFiles()) {
+      final Path sourcePath = sourceDir.toPath();
+      try {
+        Files.walkFileTree(sourcePath, new FileVisitor<>() {
+          // @formatter:off
+          @Override public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) { return FileVisitResult.CONTINUE; }
+          @Override public FileVisitResult visitFileFailed(final Path file, final IOException exc) { return FileVisitResult.CONTINUE; }
+          @Override public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) { return FileVisitResult.CONTINUE; }
+          // @formatter:on
+
+          @Override
+          public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
+            // Parse the template
+            templateNames.add(sourcePath.relativize(file).toString());
+            return FileVisitResult.CONTINUE;
+          }
+        });
+      } catch (final IOException ex) {
+        throw new GradleException("Exception encountered when gathering template names in source directory '" + sourcePath + "'", ex);
+      }
+    }
+
+    return Set.copyOf(templateNames);
+  }
+
+  @TaskAction
+  void generate() throws IOException {
     // By default, resolves FS paths
     // todo: restrict inputs to inputs and includes
+    final Loader<?> loader = this.makeLoader();
     final PebbleEngine engine = new PebbleEngine.Builder()
       .autoEscaping(false) // no html escaping
       .defaultLocale(Locale.ROOT)
@@ -146,47 +182,38 @@ public abstract class GenerateTemplates extends DefaultTask {
     final Set<Map<String, Object>> variants = ((TemplateSetInternal) this.getBaseSet().get()).prepareDataForGeneration();
     final @Nullable String header = Properties.finalized(this.getBaseSet().get().getHeader()).getOrNull();
 
+    final Set<String> availableTemplates = this.collectTemplateNames();
     final Set<String> seenOutputs = new HashSet<>();
-    Files.walkFileTree(sourceDirectory, new FileVisitor<>() {
-      // @formatter:off
-      @Override public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) { return FileVisitResult.CONTINUE; }
-      @Override public FileVisitResult visitFileFailed(final Path file, final IOException exc) { return FileVisitResult.CONTINUE; }
-      @Override public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) { return FileVisitResult.CONTINUE; }
-      // @formatter:on
 
-      @Override
-      public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-        // Parse the template
-        final String relativePath = sourceDirectory.relativize(file).toString();
-        final PebbleTemplate fileNameTemplate = engine.getLiteralTemplate(GenerateTemplates.FILE_NAME_CACHE_DISAMBIGUATOR + relativePath);
-        final PebbleTemplate template = engine.getTemplate(relativePath);
+    for (final String relativePath : availableTemplates) {
+      // Parse the template
+      final PebbleTemplate fileNameTemplate = engine.getLiteralTemplate(GenerateTemplates.FILE_NAME_CACHE_DISAMBIGUATOR + relativePath);
+      final PebbleTemplate template = engine.getTemplate(relativePath);
 
-        // Then generate outputs for every variant
-        for (final Map<String, Object> variant : variants) {
-          String outputFile = GenerateTemplates.this.evaluateToString(fileNameTemplate, variant)
-            .substring(GenerateTemplates.FILE_NAME_CACHE_DISAMBIGUATOR.length());
-          if (outputFile.endsWith(GenerateTemplates.PEBBLE_EXTENSION)) {
-            outputFile = outputFile.substring(0, outputFile.length() - GenerateTemplates.PEBBLE_EXTENSION.length());
-          }
-
-          if (!seenOutputs.add(outputFile)) {
-            throw new InvalidUserDataException("Output file " + outputFile + " (a variant of input " + relativePath + ") has already been "
-              + "written in another variant!");
-          }
-
-          final Path output = outputDirectory.resolve(outputFile);
-          Files.createDirectories(output.getParent());
-          try (final BufferedWriter writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8)) {
-            if (header != null) {
-              writer.write(header);
-              writer.write(System.lineSeparator());
-            }
-            template.evaluate(writer, variant);
-          }
+      // Then generate outputs for every variant
+      for (final Map<String, Object> variant : variants) {
+        String outputFile = GenerateTemplates.this.evaluateToString(fileNameTemplate, variant)
+          .substring(GenerateTemplates.FILE_NAME_CACHE_DISAMBIGUATOR.length());
+        if (outputFile.endsWith(GenerateTemplates.PEBBLE_EXTENSION)) {
+          outputFile = outputFile.substring(0, outputFile.length() - GenerateTemplates.PEBBLE_EXTENSION.length());
         }
-        return FileVisitResult.CONTINUE;
+
+        if (!seenOutputs.add(outputFile)) {
+          throw new InvalidUserDataException("Output file " + outputFile + " (a variant of input " + relativePath + ") has already been "
+            + "written in another variant!");
+        }
+
+        final Path output = outputDirectory.resolve(outputFile);
+        Files.createDirectories(output.getParent());
+        try (final BufferedWriter writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8)) {
+          if (header != null) {
+            writer.write(header);
+            writer.newLine();
+          }
+          template.evaluate(writer, variant);
+        }
       }
-    });
+    }
   }
 
   private String evaluateToString(final PebbleTemplate template, final Map<String, Object> data) throws IOException {
