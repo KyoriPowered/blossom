@@ -52,7 +52,7 @@ class SourceTemplateTest {
     ctx.copyInput("build.gradle");
     ctx.copyInput("Main.java", "src/main/java/test/Main.java");
     ctx.copyInput("template-data.yaml");
-    ctx.copyInput("{{ wrapper }}{{ type | capitalize }}Box.java.peb", "src/main/java-templates/test/{{ wrapper }}{{ type | capitalize }}Box.java.peb");
+    ctx.copyInput("{{ wrapper }}{{ type }}Box.java.peb", "src/main/java-templates/test/{{ wrapper }}{{ type }}Box.java.peb");
 
     // the java class Main.java reads a field from the generated template
     final BuildResult result = ctx.build("build");
