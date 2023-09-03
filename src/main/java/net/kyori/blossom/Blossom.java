@@ -21,10 +21,15 @@
 package net.kyori.blossom;
 
 import net.kyori.blossom.internal.BlossomExtensionImpl;
+import net.kyori.blossom.internal.BuildParameters;
 import net.kyori.blossom.internal.IdeConfigurer;
 import net.kyori.blossom.internal.TemplateSetInternal;
 import net.kyori.mammoth.ProjectPlugin;
+import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.Directory;
 import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
@@ -50,10 +55,11 @@ import org.jetbrains.gradle.ext.TaskTriggersConfig;
  * @since 2.0.0
  */
 public class Blossom implements ProjectPlugin {
-
   private static final String GENERATION_GROUP = "blossom";
-
   private static final String EXTENSION_NAME = "blossom";
+  private static final String BLOSSOM_RUNTIME_CONFIG = "blossomRuntime";
+  private static final String PEBBLE_ARTIFACT_ID = "io.pebbletemplates:pebble";
+  private static final String SNAKEYAML_ARTIFACT_ID = "org.snakeyaml:snakeyaml-engine";
 
   @Override
   public void apply(
@@ -66,6 +72,7 @@ public class Blossom implements ProjectPlugin {
       this.registerGenerateAllTask(project, tasks);
 
       final SourceSetContainer sourceSets = extensions.getByType(SourceSetContainer.class);
+      final NamedDomainObjectProvider<Configuration> blossomRuntimeConfig = this.registerBlossomRuntimeConfig(project.getDependencies(), project.getConfigurations());
       sourceSets.all(set -> {
         final BlossomExtension extension = set.getExtensions().create(BlossomExtension.class, EXTENSION_NAME, BlossomExtensionImpl.class, project.getObjects());
         final Directory baseInputDir = project.getLayout().getProjectDirectory().dir("src/" + set.getName());
@@ -80,12 +87,25 @@ public class Blossom implements ProjectPlugin {
           final TaskProvider<GenerateTemplates> generateTask = tasks.register(set.getTaskName("generate", templateSet.getName() + "Templates"), GenerateTemplates.class, task -> {
             task.setGroup(Blossom.GENERATION_GROUP);
             task.getBaseSet().set(templateSet);
+            task.getPebbleClasspath().from(blossomRuntimeConfig.map(it -> it.getIncoming().getFiles()));
           });
           internal.getTemplates().compiledBy(generateTask, GenerateTemplates::getOutputDir);
 
           // And add the output as a source directory
           internal.registerOutputWithSet(set, generateTask);
         });
+      });
+    });
+  }
+
+  private NamedDomainObjectProvider<Configuration> registerBlossomRuntimeConfig(final DependencyHandler dependencies, final ConfigurationContainer configurations) {
+    return configurations.register(BLOSSOM_RUNTIME_CONFIG, config -> {
+      config.setDescription("Dependencies used to perform template processing with Blossom. Currently includes Pebble and SnakeYAML Engine");
+      config.setVisible(false);
+      config.setCanBeConsumed(false);
+      config.defaultDependencies(deps -> {
+        deps.add(dependencies.create(SNAKEYAML_ARTIFACT_ID + ':' + BuildParameters.SNAKEYAML_VERSION));
+        deps.add(dependencies.create(PEBBLE_ARTIFACT_ID + ':' + BuildParameters.PEBBLE_VERSION));
       });
     });
   }

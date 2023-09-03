@@ -19,10 +19,47 @@ repositories {
   gradlePluginPortal()
 }
 
+// Worker hijinks
+// workerShared available at compile time in workerClasspath and main
+// workerClasspath is isolated for worker-only deps
+val workerShared by sourceSets.registering
+val workerClasspath by sourceSets.registering {
+  compileClasspath += sourceSets.main.get().compileClasspath
+}
+
+val privateRuntime by configurations.registering
+configurations.runtimeClasspath {
+  extendsFrom(privateRuntime.get())
+}
+
+// Register worker bits to the unpacked variant
+listOf(configurations.apiElements, configurations.runtimeElements).forEach {
+  it.configure {
+    outgoing.variants.named("classes") {
+      artifact(workerClasspath.flatMap { it.java.destinationDirectory}) {
+        type = ArtifactTypeDefinition.JVM_CLASS_DIRECTORY
+      }
+      artifact(workerShared.flatMap { it.java.destinationDirectory}) {
+        type = ArtifactTypeDefinition.JVM_CLASS_DIRECTORY
+      }
+    }
+  }
+}
+
+// Then add them to the jar
+tasks.jar {
+  from(workerShared.map { it.output })
+  from(workerClasspath.map { it.output })
+}
+
 dependencies {
   implementation(libs.mammoth)
-  implementation(libs.pebble)
-  implementation(libs.snakeyamlEngine)
+  "workerClasspathCompileOnly"(libs.pebble)
+  "workerClasspathCompileOnly"(libs.snakeyamlEngine)
+  "workerClasspathCompileOnly"(workerShared.map { it.output })
+  compileOnly(workerShared.map { it.output })
+  privateRuntime.name(workerClasspath.map { it.output })
+  privateRuntime.name(workerShared.map { it.output })
   compileOnly(libs.ideaExtPlugin)
 
   testImplementation(libs.mammoth.test)
@@ -32,6 +69,26 @@ dependencies {
   testRuntimeOnly(libs.junit.launcher)
 
   checkstyle(libs.stylecheck)
+}
+
+// generated sources
+val templatesRoot = layout.projectDirectory.dir("src/main/java-templates")
+val templateDest = layout.buildDirectory.dir("generated/sources/java-templates/")
+
+val processTemplates = tasks.register("generateJavaTemplates", Sync::class) {
+  val templateProperties = mapOf(
+    "pebbleVersion" to libs.versions.pebble.get(),
+    "snakeyamlVersion" to libs.versions.snakeyaml.get()
+  )
+  inputs.properties(templateProperties)
+
+  from(templatesRoot)
+  into(templateDest)
+  expand(templateProperties.toMutableMap())
+}
+
+sourceSets.main {
+  java.srcDir(processTemplates.map { it.outputs })
 }
 
 indra {
@@ -62,6 +119,7 @@ spotless {
     trimTrailingWhitespace()
   }
   java {
+    targetExclude("build/generated/**")
     applyCommon()
     importOrderFile(rootProject.file(".spotless/kyori.importorder"))
   }

@@ -29,6 +29,13 @@ public final class SettingsFactory {
 
   public static void writeSettings(final TestContext ctx, final String projectName) throws IOException {
     ctx.writeText("settings.gradle",
-      "rootProject.name = '" + projectName + "'\n");
+      "rootProject.name = '" + projectName + "'\n" +
+        "\n" +
+        "dependencyResolutionManagement {\n" +
+        "  repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS\n" +
+        "  repositories {\n" +
+        "    mavenCentral()\n" +
+        "  }\n" +
+        "}\n");
   }
 }

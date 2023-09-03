@@ -18,20 +18,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  * USA
  */
-package net.kyori.blossom.internal;
+package net.kyori.blossom.internal.worker;
 
-import net.kyori.blossom.GenerateTemplates;
-import net.kyori.blossom.TemplateSet;
-import org.gradle.api.file.Directory;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.TaskProvider;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Set;
 
-/**
- * Internal hooks for template sets.
- */
-public interface TemplateSetInternal extends TemplateSet {
-  // resolve an output directory for templates generated from this set, given build/generated/ as a base
-  Directory resolveOutputDirectory(final Directory generatedDir);
-
-  void registerOutputWithSet(final SourceSet destination, final TaskProvider<GenerateTemplates> generateTask);
+public interface GenerateWorkerInvoker {
+  void generate(
+    final TemplateParams globalParams,
+    final Set<TemplateParams> variantParams,
+    final Set<Path> includePaths,
+    final Set<Path> sourcePaths,
+    final Path outputDir,
+    final /* @Nullable */ String header
+  ) throws IOException;
 }
