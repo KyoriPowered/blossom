@@ -2,9 +2,9 @@
 version = "1.0"
 
 [versions]
-checkerQual = "3.37.0"
-junit = "5.10.0"
+checkstyle = "10.12.3"
 indra = "3.1.3"
+junit = "5.10.0"
 mammoth = "1.3.1"
 pebble = "3.2.1"
 snakeyaml = "2.7"
@@ -12,7 +12,7 @@ spotless = "6.21.0"
 stylecheck = "0.2.1"
 
 [libraries]
-mammoth = { module = "net.kyori:mammoth", version.ref = "mammoth"}
+mammoth = { module = "net.kyori:mammoth", version.ref = "mammoth" }
 pebble = { module = "io.pebbletemplates:pebble", version.ref = "pebble" }
 snakeyamlEngine = { module = "org.snakeyaml:snakeyaml-engine", version.ref = "snakeyaml" }
 
@@ -21,13 +21,16 @@ junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
-mammoth-test = { module = "net.kyori:mammoth-test", version.ref = "mammoth"}
-stylecheck = { module = "ca.stellardrift:stylecheck", version.ref = "stylecheck"}
+mammoth-test = { module = "net.kyori:mammoth-test", version.ref = "mammoth" }
+stylecheck = { module = "ca.stellardrift:stylecheck", version.ref = "stylecheck" }
+
+# renovate only
+zCheckstyle = { module = "com.puppycrawl.tools:checkstyle", version.ref = "checkstyle" }
 
 [plugins]
 indra = { id = "net.kyori.indra", version.ref = "indra" }
 indra-checkstyle = { id = "net.kyori.indra.checkstyle", version.ref = "indra" }
 indra-gradlePluginPublish = { id = "net.kyori.indra.publishing.gradle-plugin", version.ref = "indra" }
 indra-licenserSpotless = { id = "net.kyori.indra.licenser.spotless", version.ref = "indra" }
-pluginPublish = { id = "com.gradle.plugin-publish", version = "1.2.0" }
+pluginPublish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

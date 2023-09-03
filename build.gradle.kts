@@ -12,7 +12,7 @@ plugins {
 
 group = "net.kyori"
 version = "2.0.0-SNAPSHOT"
-description = "Gradle plugin for performing source code token replacements in Java, Kotlin, Scala, and Groovy based projects"
+description = "Gradle plugin for performing resource and source code template expansion"
 
 repositories {
   mavenCentral()
@@ -34,12 +34,13 @@ dependencies {
 }
 
 indra {
+  github("KyoriPowered", "blossom")
   javaVersions {
     target(11)
     minimumToolchain(17)
     testWith(11, 17, 20)
   }
-  github("KyoriPowered", "blossom")
+  checkstyle(libs.versions.checkstyle.get())
 }
 
 indraPluginPublishing {
@@ -48,7 +49,7 @@ indraPluginPublishing {
     "net.kyori.blossom.Blossom",
     "blossom",
     project.description,
-    listOf("blossom", "replacement")
+    listOf("templating", "replacement")
   )
   website("https://github.com/KyoriPowered/blossom")
 }
