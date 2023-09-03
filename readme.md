@@ -89,7 +89,7 @@ While templates on their own allow generating quite a bit, Blossom adds an extra
 or several named variants, which produce output from the same template but different variables as input. When combined with templated file names, this allows generating 
 a whole lot of different source files from one input (for example, when working with java primitives).
 
-Properties themselves and data files can be set both for each template set individually, and per-variant.
+Properties themselves and property files can be set both for each template set individually, and per-variant.
 
 As an example:
 
@@ -100,7 +100,7 @@ sourceSets {
   main {
     blossom {
       javaSources {
-        dataFile("template-vars.yaml")
+        propertyFile("template-vars.yaml")
         variants("float", "int", "double")
       }
     }
@@ -135,10 +135,10 @@ This will process all templates three times, once for each variant -- so a `src/
 
 Template parameters set from different sources (via the DSL) will override each other, inheriting in the following order (where the last element in the list takes priority):
 
-- Template set, defined in a set data file
+- Template set, defined in a set property file
 - Template set, defined in-buildscript
 - Variant, defined in global files
-- Variant, defined in the variant-specific data files
+- Variant, defined in the variant-specific property files
 - Variant, defined in-buildscript
 
 ## IDE Integration

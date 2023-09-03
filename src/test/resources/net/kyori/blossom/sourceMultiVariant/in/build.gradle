@@ -7,7 +7,7 @@ sourceSets {
   main {
     blossom {
       javaSources {
-        dataFile 'template-data.yaml'
+        propertyFile 'template-data.yaml'
         variants('int', 'float', 'double')
       }
     }
