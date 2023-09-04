@@ -96,7 +96,10 @@ public class GenerateWorkerInvokerImpl implements GenerateWorkerInvoker {
         try (final BufferedWriter writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8)) {
           if (header != null) {
             writer.write(header);
-            writer.newLine();
+            // Only insert a newline if there's absolutely nothing -- otherwise it's up to the header provided
+            if (header.endsWith("\n")) {
+              writer.newLine();
+            }
           }
           template.evaluate(writer, variant);
         }
