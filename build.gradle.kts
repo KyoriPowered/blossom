@@ -1,6 +1,4 @@
 import com.diffplug.gradle.spotless.FormatExtension
-import org.gradle.plugins.ide.eclipse.model.Classpath
-import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 

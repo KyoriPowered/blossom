@@ -4,8 +4,6 @@ blossom is a Gradle plugin for processing source templates to resources and sour
 
 ## Usage
 Apply the plugin to your project. Blossom requires a minimum of Java 11 and Gradle 7.2.
-ossert
-.gssert
 
 ```kotlin
 plugins {
