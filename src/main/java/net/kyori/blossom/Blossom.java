@@ -20,6 +20,7 @@
  */
 package net.kyori.blossom;
 
+import java.io.File;
 import net.kyori.blossom.internal.BlossomExtensionImpl;
 import net.kyori.blossom.internal.BuildParameters;
 import net.kyori.blossom.internal.IdeConfigurer;
@@ -36,6 +37,7 @@ import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.SetProperty;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
@@ -69,7 +71,8 @@ public class Blossom implements ProjectPlugin {
     final @NotNull TaskContainer tasks
   ) {
     plugins.withType(JavaBasePlugin.class, $ -> {
-      this.registerGenerateAllTask(project, tasks);
+      final SetProperty<File> outputDirs = project.getObjects().setProperty(File.class);
+      this.registerGenerateAllTask(project, tasks, outputDirs);
 
       final SourceSetContainer sourceSets = extensions.getByType(SourceSetContainer.class);
       final NamedDomainObjectProvider<Configuration> blossomRuntimeConfig = this.registerBlossomRuntimeConfig(project.getDependencies(), project.getConfigurations());
@@ -89,6 +92,7 @@ public class Blossom implements ProjectPlugin {
             task.getBaseSet().set(templateSet);
             task.getPebbleClasspath().from(blossomRuntimeConfig.map(it -> it.getIncoming().getFiles()));
           });
+          outputDirs.add(internal.getTemplates().getDestinationDirectory().map(Directory::getAsFile));
           internal.getTemplates().compiledBy(generateTask, GenerateTemplates::getOutputDir);
 
           // And add the output as a source directory
@@ -110,7 +114,7 @@ public class Blossom implements ProjectPlugin {
     });
   }
 
-  private void registerGenerateAllTask(final Project project, final TaskContainer tasks) {
+  private void registerGenerateAllTask(final Project project, final TaskContainer tasks, final SetProperty<File> outputDirs) {
     final TaskProvider<?> generateTemplates = tasks.register("generateTemplates", task -> {
       task.dependsOn(tasks.withType(GenerateTemplates.class));
     });
@@ -119,6 +123,12 @@ public class Blossom implements ProjectPlugin {
       @Override
       public void idea(final @NotNull Project project, final @NotNull IdeaModel idea, final @NotNull ProjectSettings ideaExtension) {
         ((ExtensionAware) ideaExtension).getExtensions().getByType(TaskTriggersConfig.class).afterSync(generateTemplates);
+        project.afterEvaluate(p -> {
+          final @Nullable IdeaModel projectIdea = p.getExtensions().getByType(IdeaModel.class);
+          if (projectIdea.getModule() != null) {
+            projectIdea.getModule().getGeneratedSourceDirs().addAll(outputDirs.get());
+          }
+        });
       }
 
       @Override
