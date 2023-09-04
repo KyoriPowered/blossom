@@ -159,7 +159,7 @@ little more than syntax highlighting.
 IntelliJ also has a setting that attempts to highlight template files as Java source files
 (available under Preferences > Languages & Frameworks > Template Data Languages). This option is of varying effectiveness depending on the source file.
 
-# Others
+### Others
 
 On other IDEs, there is no current support, but we are open to adding such support if there's a way -- open an issue if you use an IDE with such facilities that is not yet supported.
 
