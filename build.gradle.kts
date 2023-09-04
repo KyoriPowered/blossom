@@ -1,13 +1,17 @@
 import com.diffplug.gradle.spotless.FormatExtension
+import org.jetbrains.gradle.ext.settings
+import org.jetbrains.gradle.ext.taskTriggers
 
 plugins {
-  id("java-gradle-plugin")
+  `java-gradle-plugin`
   alias(libs.plugins.indra)
   alias(libs.plugins.indra.gradlePluginPublish)
   alias(libs.plugins.indra.licenserSpotless)
   alias(libs.plugins.indra.checkstyle)
   alias(libs.plugins.pluginPublish)
   alias(libs.plugins.spotless)
+  alias(libs.plugins.ideaExt)
+  eclipse
 }
 
 repositories {
@@ -67,7 +71,7 @@ dependencies {
   checkstyle(libs.stylecheck)
 }
 
-// generated sources
+// generated sources (blossom jr)
 val templatesRoot = layout.projectDirectory.dir("src/main/java-templates")
 val templateDest = layout.buildDirectory.dir("generated/sources/java-templates/")
 
@@ -85,6 +89,13 @@ val processTemplates = tasks.register("generateJavaTemplates", Sync::class) {
 
 sourceSets.main {
   java.srcDir(processTemplates.map { it.outputs })
+}
+eclipse.synchronizationTasks(processTemplates)
+if (idea.project != null) {
+  setOf(idea.project.settings.taskTriggers.afterSync(processTemplates))
+}
+if (idea.module != null) {
+  idea.module.generatedSourceDirs.add(templateDest.get().asFile)
 }
 
 indra {
