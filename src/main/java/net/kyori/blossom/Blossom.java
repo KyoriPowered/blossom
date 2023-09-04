@@ -76,7 +76,7 @@ public class Blossom implements ProjectPlugin {
       sourceSets.all(set -> {
         final BlossomExtension extension = set.getExtensions().create(BlossomExtension.class, EXTENSION_NAME, BlossomExtensionImpl.class, project.getObjects());
         final Directory baseInputDir = project.getLayout().getProjectDirectory().dir("src/" + set.getName());
-        final Provider<Directory> generatedBase = project.getLayout().getBuildDirectory().dir("generated");
+        final Provider<Directory> generatedBase = project.getLayout().getBuildDirectory().dir("generated/" + set.getName());
 
         // generate a task for each template set
         extension.getTemplateSets().all(templateSet -> {
