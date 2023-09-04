@@ -97,7 +97,7 @@ public class GenerateWorkerInvokerImpl implements GenerateWorkerInvoker {
           if (header != null) {
             writer.write(header);
             // Only insert a newline if there's absolutely nothing -- otherwise it's up to the header provided
-            if (header.endsWith("\n")) {
+            if (!header.endsWith("\n")) {
               writer.newLine();
             }
           }
