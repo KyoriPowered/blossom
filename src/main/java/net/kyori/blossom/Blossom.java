@@ -79,12 +79,12 @@ public class Blossom implements ProjectPlugin {
       sourceSets.all(set -> {
         final BlossomExtension extension = set.getExtensions().create(BlossomExtension.class, EXTENSION_NAME, BlossomExtensionImpl.class, project.getObjects());
         final Directory baseInputDir = project.getLayout().getProjectDirectory().dir("src/" + set.getName());
-        final Provider<Directory> generatedBase = project.getLayout().getBuildDirectory().dir("generated/" + set.getName());
+        final Provider<Directory> generatedBase = project.getLayout().getBuildDirectory().dir("generated");
 
         // generate a task for each template set
         extension.getTemplateSets().all(templateSet -> {
           final var internal = (TemplateSetInternal) templateSet;
-          final Provider<Directory> templateSetOutput = generatedBase.map(internal::resolveOutputDirectory);
+          final Provider<Directory> templateSetOutput = generatedBase.map(internal::resolveOutputRoot).map(dir -> dir.dir("blossom/" + set.getName() + "/" + templateSet.getName()));
           internal.templates(baseInputDir.dir(templateSet.getName() + "-templates"));
           internal.getTemplates().getDestinationDirectory().set(templateSetOutput);
           final TaskProvider<GenerateTemplates> generateTask = tasks.register(set.getTaskName("generate", templateSet.getName() + "Templates"), GenerateTemplates.class, task -> {

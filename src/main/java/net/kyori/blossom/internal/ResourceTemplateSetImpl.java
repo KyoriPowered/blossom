@@ -37,8 +37,8 @@ public abstract class ResourceTemplateSetImpl extends TemplateSetImpl implements
   }
 
   @Override
-  public Directory resolveOutputDirectory(final Directory generatedDir) {
-    return generatedDir.dir("resources/blossom-" + this.getName());
+  public Directory resolveOutputRoot(final Directory generatedDir) {
+    return generatedDir.dir("resources");
   }
 
   @Override

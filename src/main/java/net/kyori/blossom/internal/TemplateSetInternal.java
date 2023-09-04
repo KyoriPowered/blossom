@@ -31,7 +31,7 @@ import org.gradle.api.tasks.TaskProvider;
  */
 public interface TemplateSetInternal extends TemplateSet {
   // resolve an output directory for templates generated from this set, given build/generated/ as a base
-  Directory resolveOutputDirectory(final Directory generatedDir);
+  Directory resolveOutputRoot(final Directory generatedDir);
 
   void registerOutputWithSet(final SourceSet destination, final TaskProvider<GenerateTemplates> generateTask);
 }

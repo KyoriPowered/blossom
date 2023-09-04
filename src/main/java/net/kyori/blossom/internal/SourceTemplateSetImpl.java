@@ -41,8 +41,8 @@ public abstract class SourceTemplateSetImpl extends TemplateSetImpl implements S
   }
 
   @Override
-  public Directory resolveOutputDirectory(final Directory generatedDir) {
-    return generatedDir.dir("sources/blossom-" + this.getName());
+  public Directory resolveOutputRoot(final Directory generatedDir) {
+    return generatedDir.dir("sources");
   }
 
   @Override
