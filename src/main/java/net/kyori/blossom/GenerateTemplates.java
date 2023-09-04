@@ -20,9 +20,13 @@
  */
 package net.kyori.blossom;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import net.kyori.blossom.internal.FileUtils;
 import net.kyori.blossom.internal.worker.GenerateWorker;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -106,7 +110,15 @@ public abstract class GenerateTemplates extends DefaultTask {
   protected abstract WorkerExecutor getWorkerExecutor();
 
   @TaskAction
-  void generate() {
+  void generate() throws IOException {
+    final Path outputPath = this.getOutputDir().get().getAsFile().toPath();
+    if (Files.exists(outputPath)) {
+      // clear out contents
+      FileUtils.deleteContents(outputPath);
+    } else {
+      FileUtils.createDirectoriesSymlinkSafe(outputPath);
+    }
+
     this.getWorkerExecutor().classLoaderIsolation(spec -> {
       spec.getClasspath().from(this.getPebbleClasspath());
     }).submit(GenerateWorker.class, spec -> {

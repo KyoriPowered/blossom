@@ -68,7 +68,6 @@ public class GenerateWorkerInvokerImpl implements GenerateWorkerInvoker {
       .strictVariables(true) // make sure to fail when vars are not present
       .build();
 
-    Files.createDirectories(outputDirectory);
     final Set<Map<String, Object>> variants = PropertyFileIO.prepareDataForGeneration(globalParams, variantParams);
 
     final Set<String> availableTemplates = this.collectTemplateNames(sourcePaths);
