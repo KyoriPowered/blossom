@@ -10,10 +10,6 @@ plugins {
   alias(libs.plugins.spotless)
 }
 
-group = "net.kyori"
-version = "2.0.0-SNAPSHOT"
-description = "Gradle plugin for performing resource and source code template expansion"
-
 repositories {
   mavenCentral()
   gradlePluginPortal()
@@ -92,13 +88,34 @@ sourceSets.main {
 }
 
 indra {
-  github("KyoriPowered", "blossom")
+  github("KyoriPowered", "blossom") {
+    ci(true)
+  }
+
   javaVersions {
     target(11)
     minimumToolchain(17)
     testWith(11, 17)
   }
   checkstyle(libs.versions.checkstyle.get())
+
+  signWithKeyFromPrefixedProperties("kyori")
+  configurePublications {
+    pom {
+      organization {
+        name = "KyoriPowered"
+        url = "https://kyori.net"
+      }
+
+      developers {
+        developer {
+          id = "zml"
+          email = "zml at kyori [.] net"
+          timezone = "America/Vancouver"
+        }
+      }
+    }
+  }
 }
 
 indraPluginPublishing {
