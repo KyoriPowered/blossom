@@ -113,6 +113,7 @@ indra {
   signWithKeyFromPrefixedProperties("kyori")
   configurePublications {
     pom {
+      url = "https://blossom.kyori.net"
       organization {
         name = "KyoriPowered"
         url = "https://kyori.net"
@@ -137,7 +138,7 @@ indraPluginPublishing {
     project.description,
     listOf("templating", "replacement")
   )
-  website("https://github.com/KyoriPowered/blossom")
+  website("https://blossom.kyori.net/")
 }
 
 spotless {
