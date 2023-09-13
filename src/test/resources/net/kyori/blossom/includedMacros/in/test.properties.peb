@@ -1,0 +1,2 @@
+{% import "macros.peb" %}
+value={{ hello(property) }}

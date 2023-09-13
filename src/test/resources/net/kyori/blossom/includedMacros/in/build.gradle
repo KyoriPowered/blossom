@@ -1,0 +1,15 @@
+plugins {
+  id 'java'
+  id 'net.kyori.blossom'
+}
+
+sourceSets {
+  main {
+    blossom {
+      resources {
+        property('property', 'abc123')
+        include('src/main/resource-macros')
+      }
+    }
+  }
+}
