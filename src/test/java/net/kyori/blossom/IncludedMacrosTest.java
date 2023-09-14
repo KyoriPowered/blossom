@@ -32,14 +32,12 @@ import net.kyori.blossom.test.SettingsFactory;
 import net.kyori.mammoth.test.TestContext;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayNameGeneration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled
 @DisplayNameGeneration(BlossomDisplayNameGeneration.class)
 class IncludedMacrosTest {
   @BlossomFunctionalTest
