@@ -67,8 +67,13 @@ final class PropertyFileIO {
       final Set<Map<String, Object>> output = new HashSet<>();
       // then get the per-variant bits
       for (final TemplateParams variant : variantParams) {
+        final Map<String, Object> variantData = new LinkedHashMap<>();
+
+        // defaults
+        variantData.put("variant", variant.name());
+
         // global, from file
-        final Map<String, Object> variantData = new LinkedHashMap<>(global);
+        variantData.putAll(global);
 
         // variant, from global files
         final Map<String, Object> variantFromGlobalFile = configData.remove(variant.name());
