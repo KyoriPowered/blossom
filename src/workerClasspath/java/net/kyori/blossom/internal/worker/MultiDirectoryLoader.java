@@ -60,7 +60,7 @@ final class MultiDirectoryLoader implements Loader<String> {
       final Path file = path.resolve(templateName);
       if (Files.isRegularFile(file)
         // guard against escaping the directory
-        && path.relativize(file).toString().equals(templateName)) {
+        && file.toAbsolutePath().startsWith(path.toAbsolutePath())) {
         return file;
       }
     }
