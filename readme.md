@@ -133,6 +133,8 @@ This will process all templates three times, once for each variant -- so a `src/
 
 Template parameters set from different sources (via the DSL) will override each other, inheriting in the following order (where the last element in the list takes priority):
 
+- Default properties provided by Blossom
+  - `variant`: provides the variant name as a parameter (only present in named variant mode)
 - Template set, defined in a set property file
 - Template set, defined in-buildscript
 - Variant, defined in global files
