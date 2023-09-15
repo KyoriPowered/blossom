@@ -23,6 +23,7 @@ package net.kyori.blossom;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -45,7 +46,9 @@ class IncludedMacrosTest {
     SettingsFactory.writeSettings(ctx, "includedMacros");
     ctx.copyInput("build.gradle");
     ctx.copyInput("test.properties.peb", "src/main/resource-templates/test.properties.peb");
+    // test import with and without .peb extension specified
     ctx.copyInput("macros.peb", "src/main/resource-macros/macros.peb");
+    ctx.copyInput("macros1.peb", "src/main/resource-macros/macros1.peb");
 
     final BuildResult result = ctx.build("assemble"); // build a jar
 
@@ -62,7 +65,9 @@ class IncludedMacrosTest {
         props.load(is);
       }
 
-      assertEquals("abc123 abc123 abc123", props.getProperty("value"));
+      final String expected = "abc123 abc123 abc123";
+      assertEquals(expected, props.getProperty("value"));
+      assertEquals(expected.toUpperCase(Locale.ROOT), props.getProperty("valueUpper"));
     }
   }
 }

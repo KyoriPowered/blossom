@@ -57,12 +57,25 @@ final class MultiDirectoryLoader implements Loader<String> {
 
   private @Nullable Path findFile(final String templateName) {
     for (final Path path : this.directories) {
-      final Path file = path.resolve(templateName);
-      if (Files.isRegularFile(file)
-        // guard against escaping the directory
-        && file.toAbsolutePath().startsWith(path.toAbsolutePath())) {
+      @Nullable Path file = findFileIn(templateName, path);
+
+      if (file == null && !templateName.endsWith(".peb")) {
+        file = findFileIn(templateName + ".peb", path);
+      }
+
+      if (file != null) {
         return file;
       }
+    }
+    return null;
+  }
+
+  private static @Nullable Path findFileIn(final String templateName, final Path path) {
+    final Path file = path.resolve(templateName);
+    if (Files.isRegularFile(file)
+      // guard against escaping the directory
+      && file.toAbsolutePath().startsWith(path.toAbsolutePath())) {
+      return file;
     }
     return null;
   }
