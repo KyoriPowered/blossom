@@ -1,0 +1,5 @@
+{% import "macros.peb" %}
+{% import "macros1" %}
+value={{ hello(property) }}
+
+valueUpper={{ helloUpper(property) }}

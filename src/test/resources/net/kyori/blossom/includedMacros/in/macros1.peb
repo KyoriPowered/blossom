@@ -1,0 +1,3 @@
+{% macro helloUpper(value) %}
+{{ value | upper }} {{ value | upper  }} {{ value | upper  }}
+{% endmacro %}

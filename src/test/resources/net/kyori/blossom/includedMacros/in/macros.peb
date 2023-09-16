@@ -1,0 +1,3 @@
+{% macro hello(value) %}
+{{ value }} {{ value }} {{ value }}
+{% endmacro %}

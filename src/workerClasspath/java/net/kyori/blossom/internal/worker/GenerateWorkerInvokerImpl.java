@@ -21,8 +21,6 @@
 package net.kyori.blossom.internal.worker;
 
 import io.pebbletemplates.pebble.PebbleEngine;
-import io.pebbletemplates.pebble.loader.DelegatingLoader;
-import io.pebbletemplates.pebble.loader.FileLoader;
 import io.pebbletemplates.pebble.loader.Loader;
 import io.pebbletemplates.pebble.template.PebbleTemplate;
 import java.io.BufferedWriter;
@@ -34,12 +32,12 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
 import org.jetbrains.annotations.Nullable;
@@ -109,25 +107,10 @@ public class GenerateWorkerInvokerImpl implements GenerateWorkerInvoker {
   }
 
   private Loader<?> makeLoader(final Set<Path> sourcePaths, final Set<Path> includePaths) {
-    final List<Loader<?>> loaders = new ArrayList<>();
-    for (final Path sourceDir : sourcePaths) {
-      final Loader<?> sourceLoader = new FileLoader();
-      sourceLoader.setPrefix(sourceDir.toAbsolutePath().toString());
-      loaders.add(sourceLoader);
-    }
-
-    if (!includePaths.isEmpty()) {
-      for (final Path includesDir : includePaths) {
-        final Loader<?> includesLoader = new FileLoader();
-        includesLoader.setPrefix(includesDir.toAbsolutePath().toString());
-      }
-    }
-
-    switch (loaders.size()) {
-      case 0: throw new GradleException("No sources directories declared!");
-      case 1: return loaders.get(0);
-      default: return new DelegatingLoader(loaders);
-    }
+    return new MultiDirectoryLoader(
+      Stream.concat(sourcePaths.stream(), includePaths.stream()).collect(Collectors.toList()),
+      StandardCharsets.UTF_8
+    );
   }
 
   private Set<String> collectTemplateNames(final Set<Path> sourceDirs) {
