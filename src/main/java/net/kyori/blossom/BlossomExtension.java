@@ -20,12 +20,13 @@
  */
 package net.kyori.blossom;
 
-import java.util.Objects;
 import net.kyori.mammoth.Configurable;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.PolymorphicDomainObjectContainer;
 import org.jetbrains.annotations.NotNull;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Templating that applies to a specific source set.
@@ -48,11 +49,7 @@ public interface BlossomExtension {
    * @since 2.0.0
    */
   default @NotNull NamedDomainObjectProvider<ResourceTemplateSet> resources() {
-    if (this.getTemplateSets().getNames().contains(RESOURCE_TEMPLATE_SET_NAME)) {
-      return this.getTemplateSets().named(RESOURCE_TEMPLATE_SET_NAME, ResourceTemplateSet.class);
-    } else {
-      return this.getTemplateSets().register(RESOURCE_TEMPLATE_SET_NAME, ResourceTemplateSet.class);
-    }
+    return this.customResources(RESOURCE_TEMPLATE_SET_NAME);
   }
 
   /**
@@ -62,7 +59,38 @@ public interface BlossomExtension {
    * @since 2.0.0
    */
   default void resources(final @NotNull Action<? super ResourceTemplateSet> configureAction) {
-    this.resources().configure(Objects.requireNonNull(configureAction, "configureAction"));
+    this.resources().configure(requireNonNull(configureAction, "configureAction"));
+  }
+
+  /**
+   * Register an additional template set for resources.
+   *
+   * <p>By default, this set will read templates from the {@code src/<source set name>/<template set name>-templates}</p>
+   *
+   * @param setName the set name, cannot overlap with any source or resource template sets
+   * @return the resource template set for configuration
+   * @since 2.1.0
+   */
+  default @NotNull NamedDomainObjectProvider<ResourceTemplateSet> customResources(final @NotNull String setName) {
+    requireNonNull(setName, "setName");
+    if (this.getTemplateSets().getNames().contains(setName)) {
+      return this.getTemplateSets().named(setName, ResourceTemplateSet.class);
+    } else {
+      return this.getTemplateSets().register(setName, ResourceTemplateSet.class);
+    }
+  }
+
+  /**
+   * Register an additional template set for resources.
+   *
+   * <p>By default, this set will read templates from the {@code src/<source set name>/<template set name>-templates}</p>
+   *
+   * @param setName the set name, cannot overlap with any source or resource template sets
+   * @param configureAction the action to perform on the primary resource template set
+   * @since 2.1.0
+   */
+  default void customResources(final @NotNull String setName, final @NotNull Action<? super ResourceTemplateSet> configureAction) {
+    this.customResources(setName).configure(requireNonNull(configureAction, "configureAction"));
   }
 
   private NamedDomainObjectProvider<SourceTemplateSet> registerSourceTemplateSet(final String name, final Action<SourceTemplateSet> setLanguageChooser) {
@@ -94,7 +122,7 @@ public interface BlossomExtension {
    * @since 2.0.0
    */
   default void groovySources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
-    this.registerSourceTemplateSet(GROOVY_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::groovy).configure(Objects.requireNonNull(configureAction, "configureAction"));
+    this.registerSourceTemplateSet(GROOVY_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::groovy).configure(requireNonNull(configureAction, "configureAction"));
   }
 
   /**
@@ -118,7 +146,7 @@ public interface BlossomExtension {
    * @since 2.0.0
    */
   default void javaSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
-    this.registerSourceTemplateSet(JAVA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::java).configure(Objects.requireNonNull(configureAction, "configureAction"));
+    this.registerSourceTemplateSet(JAVA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::java).configure(requireNonNull(configureAction, "configureAction"));
   }
 
   /**
@@ -142,7 +170,7 @@ public interface BlossomExtension {
    * @since 2.0.0
    */
   default void kotlinSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
-    this.registerSourceTemplateSet(KOTLIN_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::kotlin).configure(Objects.requireNonNull(configureAction, "configureAction"));
+    this.registerSourceTemplateSet(KOTLIN_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::kotlin).configure(requireNonNull(configureAction, "configureAction"));
   }
 
   /**
@@ -166,8 +194,33 @@ public interface BlossomExtension {
    * @since 2.0.0
    */
   default void scalaSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
-    this.registerSourceTemplateSet(SCALA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::scala).configure(Objects.requireNonNull(configureAction, "configureAction"));
+    this.registerSourceTemplateSet(SCALA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::scala).configure(requireNonNull(configureAction, "configureAction"));
   }
+
+  /**
+   * Register an additional template set for source templates.
+   *
+   * <p>By default, this set will read templates from the {@code src/<source set name>/<template set name>-templates}</p>
+   *
+   * <p>This template set must be configured to be attached to a specific language -- one of the built-in ones or any custom languages.</p>
+   *
+   * @param setName the set name, cannot overlap with any source or resource template sets
+   * @param configureAction the action to configure the set with
+   * @return the source template set
+   * @since 2.1.0
+   */
+  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> customSources(final @NotNull String setName, final @NotNull Action<? super SourceTemplateSet> configureAction) {
+    requireNonNull(setName, "setName");
+    final NamedDomainObjectProvider<SourceTemplateSet> setProvider;
+    if (this.getTemplateSets().getNames().contains(setName)) {
+      setProvider = this.getTemplateSets().named(setName, SourceTemplateSet.class);
+    } else {
+      setProvider = this.getTemplateSets().register(setName, SourceTemplateSet.class);
+    }
+    setProvider.configure(requireNonNull(configureAction, "configureAction"));
+    return setProvider;
+  }
+
 
   /**
    * Get all currently registered template sets for this source set.
