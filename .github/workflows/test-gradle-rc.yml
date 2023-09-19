@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     uses: KyoriPowered/.github/.github/workflows/shared-test-gradle-rc.yaml@trunk
+    permissions:
+      actions: write
+      contents: read
     with:
       gradle_version: "${{ inputs.gradle-version }}"
       injected_version_path: 'src/test/resources/'
