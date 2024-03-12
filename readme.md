@@ -3,11 +3,11 @@ blossom [![Build Status](https://img.shields.io/github/actions/workflow/status/K
 blossom is a Gradle plugin for processing source templates to resources and sources across several languages. It is licensed under the [LGPL v2.1] license.
 
 ## Usage
-Apply the plugin to your project. Blossom requires a minimum of Java 11 and Gradle 7.2.
+Apply the plugin to your project. Blossom requires a minimum of Java 11 and Gradle 7.6.
 
 ```kotlin
 plugins {
-  id("net.kyori.blossom") version "2.0.0"
+  id("net.kyori.blossom") version "2.1.0"
 }
 ```
 
