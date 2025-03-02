@@ -9,7 +9,7 @@ junit = "5.11.4"
 mammoth = "1.4.0"
 pebble = "3.2.3"
 snakeyaml = "2.8"
-spotless = "6.25.0"
+spotless = "7.0.2"
 stylecheck = "0.2.1"
 
 [libraries]
