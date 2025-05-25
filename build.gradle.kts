@@ -144,7 +144,7 @@ indraPluginPublishing {
 spotless {
   fun FormatExtension.applyCommon() {
     endWithNewline()
-    indentWithSpaces(2)
+    leadingTabsToSpaces(2)
     trimTrailingWhitespace()
   }
   java {
