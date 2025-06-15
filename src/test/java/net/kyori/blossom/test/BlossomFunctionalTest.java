@@ -34,7 +34,7 @@ import net.kyori.mammoth.test.TestVariantResource;
 @GradleParameters({"--warning-mode", "fail", "--stacktrace"}) // parameters for all variants
 @TestVariant(gradleVersion = "7.6.4", maximumRuntimeVersion = 20)
 @TestVariant(gradleVersion = "8.9", extraArguments = {"--configuration-cache"}) // last version with non-deprecated support for runtimes <17
-@TestVariant(gradleVersion = "8.10", extraArguments = {"--configuration-cache"}, minimumRuntimeVersion = 17)
+@TestVariant(gradleVersion = "8.14.2", extraArguments = {"--configuration-cache"}, minimumRuntimeVersion = 17)
 @TestVariantResource(value = "/injected-gradle-versions", optional = true, minimumRuntimeVersion = 17) // newer Gradle versions deprecate running on JDK <17, and this is only for RC's
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

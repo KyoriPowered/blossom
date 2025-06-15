@@ -142,6 +142,7 @@ public abstract class GenerateTemplates extends DefaultTask {
 
       // general properties
       spec.getHeader().set(this.getBaseSet().flatMap(TemplateSet::getHeader));
+      spec.getTrimNewlines().set(this.getBaseSet().flatMap(TemplateSet::getTrimNewlines));
       spec.getSourceDirectories().from(this.getSourceDirectories());
       spec.getIncludesDirectories().from(this.getIncludesDirectories());
       spec.getDestinationDirectory().set(this.getOutputDir());

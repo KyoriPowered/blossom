@@ -53,13 +53,15 @@ public class GenerateWorkerInvokerImpl implements GenerateWorkerInvoker {
     final Set<Path> includePaths,
     final Set<Path> sourcePaths,
     final Path outputDirectory,
-    final @Nullable String header
+    final @Nullable String header,
+    final boolean trimNewlines
   ) throws IOException {
     // By default, resolves FS paths
     // todo: restrict inputs to inputs and includes
     final Loader<?> loader = this.makeLoader(sourcePaths, includePaths);
     final PebbleEngine engine = new PebbleEngine.Builder()
       .autoEscaping(false) // no html escaping
+      .newLineTrimming(trimNewlines) // can mess with line breaks in yaml files
       .defaultLocale(Locale.ROOT)
       .loader(loader)
       // .cacheActive(false) // xX: overlap between file names and template names causes issues

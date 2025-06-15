@@ -27,6 +27,7 @@ import net.kyori.blossom.SourceTemplateSet;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +37,8 @@ public abstract class SourceTemplateSetImpl extends TemplateSetImpl implements S
   private transient TaskProvider<GenerateTemplates> pendingGenerateTask;
 
   @Inject
-  public SourceTemplateSetImpl(final String name) {
-    super(name);
+  public SourceTemplateSetImpl(final ObjectFactory objects, final String name) {
+    super(objects, name);
   }
 
   @Override

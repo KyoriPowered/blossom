@@ -32,8 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A directory of templates.
- *
- * <p>While it's perfectly possible to </p>
  */
 public abstract class TemplateSetImpl implements TemplateSetInternal {
   // shared
@@ -41,23 +39,22 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
   private final MapProperty<String, Object> properties;
   private final NamedDomainObjectContainer<Variant> variants;
   private final Property<String> header;
+  private final Property<Boolean> trimNewlines;
   private transient final SourceDirectorySet includes;
   private transient final SourceDirectorySet templates;
   private final String name;
 
   @Inject
-  public TemplateSetImpl(final String name) {
+  public TemplateSetImpl(final ObjectFactory objects, final String name) {
     this.name = name;
-    this.dataFiles = this.getObjects().fileCollection();
-    this.properties = this.getObjects().mapProperty(String.class, Object.class);
-    this.variants = this.getObjects().domainObjectContainer(Variant.class, n -> this.getObjects().newInstance(VariantImpl.class, n));
-    this.header = this.getObjects().property(String.class);
-    this.includes = this.getObjects().sourceDirectorySet(name + "-template-includes", name + " template includes");
-    this.templates = this.getObjects().sourceDirectorySet(name + "-templates", name + " templates");
+    this.dataFiles = objects.fileCollection();
+    this.properties = objects.mapProperty(String.class, Object.class);
+    this.variants = objects.domainObjectContainer(Variant.class, n -> objects.newInstance(VariantImpl.class, n));
+    this.header = objects.property(String.class);
+    this.trimNewlines = objects.property(Boolean.class).convention(true);
+    this.includes = objects.sourceDirectorySet(name + "-template-includes", name + " template includes");
+    this.templates = objects.sourceDirectorySet(name + "-templates", name + " templates");
   }
-
-  @Inject
-  protected abstract ObjectFactory getObjects();
 
   @Override
   public @NotNull String getName() {
@@ -79,6 +76,11 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
   @Override
   public @NotNull Property<String> getHeader() {
     return this.header;
+  }
+
+  @Override
+  public @NotNull Property<Boolean> getTrimNewlines() {
+    return this.trimNewlines;
   }
 
   @Override
