@@ -33,6 +33,12 @@ sourceSets {
 }
 ```
 
+> [!IMPORTANT]
+> When processing templates, Pebble will trim newlines immediately after a template tag.
+> This might not be desired when using formats like YAML or Java properties files, so Blossom offers a way to disable this behaviour:
+>
+> Add a `trimNewlines = false` line to the template set block and stripping will be disabled for any templates in the set.
+
 Then place a file in the `src/main/resource-templates` folder:
 
 `build-vars.properties`:
