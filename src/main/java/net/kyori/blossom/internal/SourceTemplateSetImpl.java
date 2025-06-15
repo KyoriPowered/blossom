@@ -30,11 +30,13 @@ import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public abstract class SourceTemplateSetImpl extends TemplateSetImpl implements SourceTemplateSet {
-  private transient SourceSet pendingDestination;
-  private transient TaskProvider<GenerateTemplates> pendingGenerateTask;
+  private transient @Nullable SourceSet pendingDestination;
+  private transient @Nullable TaskProvider<GenerateTemplates> pendingGenerateTask;
 
   @Inject
   public SourceTemplateSetImpl(final ObjectFactory objects, final String name) {
@@ -80,7 +82,7 @@ public abstract class SourceTemplateSetImpl extends TemplateSetImpl implements S
   }
 
   @Override
-  public void namedLanguageExtension(final @NotNull String name) {
+  public void namedLanguageExtension(final String name) {
     this.applySourceLens(lensForNamedExtension(name));
   }
 }

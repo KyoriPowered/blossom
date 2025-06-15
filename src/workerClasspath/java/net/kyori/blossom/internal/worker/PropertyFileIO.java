@@ -33,10 +33,13 @@ import java.util.Map;
 import java.util.Set;
 import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.snakeyaml.engine.v2.api.Load;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
+@NullMarked
 final class PropertyFileIO {
 
   private PropertyFileIO() {
@@ -124,7 +127,7 @@ final class PropertyFileIO {
     return templateParams;
   }
 
-  private static void unmarshalData(final Map<String, Map<String, Object>> output, final Object data, final boolean useVariants) {
+  private static void unmarshalData(final Map<@Nullable String, Map<@Nullable String, Object>> output, final Object data, final boolean useVariants) {
     if (!(data instanceof Map<?, ?>)) {
       throw new InvalidUserDataException("Template data files must have a mapping as the root node");
     }
@@ -149,8 +152,8 @@ final class PropertyFileIO {
     output.put(null, makeStringKeys((Map<?, ?>) data));
   }
 
-  private static Map<String, Object> makeStringKeys(final Map<?, ?> map) {
-    final Map<String, Object> ret = new LinkedHashMap<>();
+  private static Map<@Nullable String, Object> makeStringKeys(final Map<? extends @Nullable Object, ?> map) {
+    final Map<@Nullable String, Object> ret = new LinkedHashMap<>();
     for (final Map.Entry<?, ?> entry : map.entrySet()) {
       ret.put(entry.getKey() == null ? null : entry.getKey().toString(), entry.getValue());
     }

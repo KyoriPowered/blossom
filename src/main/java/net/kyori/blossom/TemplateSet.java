@@ -36,7 +36,7 @@ import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A set of templates associated with one source sets.
@@ -45,11 +45,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since 2.0.0
  */
+@NullMarked
 @ApiStatus.NonExtendable
 public interface TemplateSet extends Named {
   @Internal
   @Override
-  @NotNull String getName();
+  String getName();
 
   /**
    * Whether to strip trailing newlines from Pebble tokens that occur at the end of a line.
@@ -61,7 +62,7 @@ public interface TemplateSet extends Named {
    * @since 2.2.0
    */
   @Input
-  @NotNull Property<Boolean> getTrimNewlines();
+  Property<Boolean> getTrimNewlines();
 
   /**
    * A collection of data files in YAML format.
@@ -70,7 +71,7 @@ public interface TemplateSet extends Named {
    * @since 2.0.0
    */
   @InputFiles
-  @NotNull ConfigurableFileCollection getPropertyFiles();
+  ConfigurableFileCollection getPropertyFiles();
 
   /**
    * Add a data file for variable data.
@@ -78,7 +79,7 @@ public interface TemplateSet extends Named {
    * @param dataFile the data file to add, evaluated as per {@link org.gradle.api.Project#file(Object)}
    * @since 2.0.0
    */
-  default void propertyFile(final @NotNull Object dataFile) {
+  default void propertyFile(final Object dataFile) {
     this.getPropertyFiles().from(dataFile);
   }
 
@@ -91,7 +92,7 @@ public interface TemplateSet extends Named {
    * @since 2.0.0
    */
   @Input
-  @NotNull MapProperty<String, Object> getProperties();
+  MapProperty<String, Object> getProperties();
 
   /**
    * Set a single property for this template.
@@ -125,7 +126,7 @@ public interface TemplateSet extends Named {
    */
   @Input
   @Optional
-  @NotNull Property<String> getHeader();
+  Property<String> getHeader();
 
   /**
    * A container of template variants.
@@ -136,7 +137,7 @@ public interface TemplateSet extends Named {
    * @since 2.0.0
    */
   @Nested
-  @NotNull NamedDomainObjectContainer<Variant> getVariants();
+  NamedDomainObjectContainer<Variant> getVariants();
 
   /**
    * Register variants with certain names to be produced.
@@ -144,7 +145,7 @@ public interface TemplateSet extends Named {
    * @param variants the variants to produce
    * @since 2.0.0
    */
-  default void variants(final @NotNull String@NotNull... variants) {
+  default void variants(final String... variants) {
     for (final String variant : variants) {
       this.getVariants().register(variant);
     }
@@ -156,7 +157,7 @@ public interface TemplateSet extends Named {
    * @param configureAction an action to configure variants
    * @since 2.0.0
    */
-  default void variants(final @NotNull Action<NamedDomainObjectSet<Variant>> configureAction) {
+  default void variants(final Action<NamedDomainObjectSet<Variant>> configureAction) {
     Configurable.configure(this.getVariants(), configureAction);
   }
 
@@ -169,7 +170,7 @@ public interface TemplateSet extends Named {
    * @since 2.0.0
    */
   @Internal
-  @NotNull SourceDirectorySet getTemplates();
+  SourceDirectorySet getTemplates();
 
   /**
    * Add one or more directories containing templates.
@@ -177,7 +178,7 @@ public interface TemplateSet extends Named {
    * @param templates the template directories to add, evaluated following {@link org.gradle.api.Project#files(Object...)}
    * @since 2.0.0
    */
-  default void templates(final @NotNull Object@NotNull... templates) {
+  default void templates(final Object... templates) {
     this.getTemplates().srcDirs(templates);
   }
 
@@ -188,7 +189,7 @@ public interface TemplateSet extends Named {
    * @since 2.0.0
    */
   @Internal
-  @NotNull SourceDirectorySet getIncludes();
+  SourceDirectorySet getIncludes();
 
   /**
    * Add includes directories to the template path.
@@ -197,7 +198,7 @@ public interface TemplateSet extends Named {
    * @see #getIncludes()
    * @since 2.0.0
    */
-  default void include(final @NotNull Object@NotNull... includes) {
+  default void include(final Object... includes) {
     this.getIncludes().srcDirs(includes);
   }
 }

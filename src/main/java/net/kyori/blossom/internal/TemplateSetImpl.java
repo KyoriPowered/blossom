@@ -28,11 +28,12 @@ import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A directory of templates.
  */
+@NullMarked
 public abstract class TemplateSetImpl implements TemplateSetInternal {
   // shared
   private final ConfigurableFileCollection dataFiles;
@@ -57,46 +58,46 @@ public abstract class TemplateSetImpl implements TemplateSetInternal {
   }
 
   @Override
-  public @NotNull String getName() {
+  public String getName() {
     return this.name;
   }
 
   // global properties
 
   @Override
-  public @NotNull ConfigurableFileCollection getPropertyFiles() { // if there are variants, reads per-variant data from a list under `variants`
+  public ConfigurableFileCollection getPropertyFiles() { // if there are variants, reads per-variant data from a list under `variants`
     return this.dataFiles;
   }
 
   @Override
-  public @NotNull MapProperty<String, Object> getProperties() {
+  public MapProperty<String, Object> getProperties() {
     return this.properties;
   }
 
   @Override
-  public @NotNull Property<String> getHeader() {
+  public Property<String> getHeader() {
     return this.header;
   }
 
   @Override
-  public @NotNull Property<Boolean> getTrimNewlines() {
+  public Property<Boolean> getTrimNewlines() {
     return this.trimNewlines;
   }
 
   @Override
-  public @NotNull SourceDirectorySet getIncludes() {
+  public SourceDirectorySet getIncludes() {
     return this.includes;
   }
 
   @Override
-  public @NotNull SourceDirectorySet getTemplates() {
+  public SourceDirectorySet getTemplates() {
     return this.templates;
   }
 
   // variant
 
   @Override
-  public @NotNull NamedDomainObjectContainer<Variant> getVariants() {
+  public NamedDomainObjectContainer<Variant> getVariants() {
     return this.variants;
   }
 }

@@ -37,7 +37,9 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public abstract class GenerateWorker implements WorkAction<GenerateWorker.Params> {
   public interface Params extends WorkParameters {
     // parameters + data files

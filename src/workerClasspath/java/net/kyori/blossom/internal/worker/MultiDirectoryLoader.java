@@ -31,8 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 final class MultiDirectoryLoader implements Loader<String> {
   private final List<Path> directories;
   private final Charset charset;
@@ -57,7 +59,7 @@ final class MultiDirectoryLoader implements Loader<String> {
 
   private @Nullable Path findFile(final String templateName) {
     for (final Path path : this.directories) {
-      @Nullable Path file = findFileIn(templateName, path);
+      Path file = findFileIn(templateName, path);
 
       if (file == null && !templateName.endsWith(".peb")) {
         file = findFileIn(templateName + ".peb", path);

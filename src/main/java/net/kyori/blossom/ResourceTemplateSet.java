@@ -20,10 +20,13 @@
  */
 package net.kyori.blossom;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * A template set type targeting resources.
  *
  * @since 2.0.0
  */
+@NullMarked
 public interface ResourceTemplateSet extends TemplateSet {
 }

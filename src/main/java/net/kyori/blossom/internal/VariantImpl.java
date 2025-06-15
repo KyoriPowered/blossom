@@ -27,8 +27,9 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class VariantImpl implements Variant {
   private final String name;
   private final ConfigurableFileCollection sourceFiles;
@@ -42,19 +43,19 @@ public class VariantImpl implements Variant {
   }
 
   @Override
-  public @NotNull String getName() {
+  public String getName() {
     return this.name;
   }
 
   @Override
   @InputFiles
-  public @NotNull ConfigurableFileCollection getPropertyFiles() {
+  public ConfigurableFileCollection getPropertyFiles() {
     return this.sourceFiles;
   }
 
   @Override
   @Input
-  public @NotNull MapProperty<String, Object> getProperties() {
+  public MapProperty<String, Object> getProperties() {
     return this.runtimeProperties;
   }
 }

@@ -28,8 +28,9 @@ import net.kyori.blossom.TemplateSet;
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
 import org.gradle.api.PolymorphicDomainObjectContainer;
 import org.gradle.api.model.ObjectFactory;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class BlossomExtensionImpl implements BlossomExtension {
   private final ExtensiblePolymorphicDomainObjectContainer<TemplateSet> templateSets;
 
@@ -41,7 +42,7 @@ public class BlossomExtensionImpl implements BlossomExtension {
   }
 
   @Override
-  public @NotNull PolymorphicDomainObjectContainer<TemplateSet> getTemplateSets() {
+  public PolymorphicDomainObjectContainer<TemplateSet> getTemplateSets() {
     return this.templateSets;
   }
 }
