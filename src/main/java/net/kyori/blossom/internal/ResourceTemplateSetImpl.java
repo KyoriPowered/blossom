@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import net.kyori.blossom.GenerateTemplates;
 import net.kyori.blossom.ResourceTemplateSet;
 import org.gradle.api.file.Directory;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 
@@ -32,8 +33,8 @@ import org.gradle.api.tasks.TaskProvider;
  */
 public abstract class ResourceTemplateSetImpl extends TemplateSetImpl implements ResourceTemplateSet {
   @Inject
-  public ResourceTemplateSetImpl(final String name) {
-    super(name);
+  public ResourceTemplateSetImpl(final ObjectFactory objects, final String name) {
+    super(objects, name);
   }
 
   @Override

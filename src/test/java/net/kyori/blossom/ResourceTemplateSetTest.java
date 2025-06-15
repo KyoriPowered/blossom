@@ -65,4 +65,19 @@ class ResourceTemplateSetTest {
     }
   }
 
+  @BlossomFunctionalTest
+  void testTrimTrailing(final TestContext ctx) throws IOException {
+    SettingsFactory.writeSettings(ctx, "trimTrailing");
+    ctx.copyInput("build.gradle");
+    ctx.copyInput("meta.yaml.peb", "src/main/resource-templates/meta.yaml.peb");
+
+    final BuildResult result = ctx.build("generateTemplates"); // build templates
+    assertEquals(TaskOutcome.SUCCESS, result.task(":generateResourceTemplates").getOutcome());
+
+    ctx.assertOutputEquals(
+      "meta.yaml",
+      "build/generated/resources/blossom/main/resource/meta.yaml"
+    );
+  }
+
 }

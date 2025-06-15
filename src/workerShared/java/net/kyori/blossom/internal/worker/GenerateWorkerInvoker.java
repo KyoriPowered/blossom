@@ -31,6 +31,7 @@ public interface GenerateWorkerInvoker {
     final Set<Path> includePaths,
     final Set<Path> sourcePaths,
     final Path outputDir,
-    final /* @Nullable */ String header
+    final /* @Nullable */ String header,
+    final boolean trimNewlines
   ) throws IOException;
 }

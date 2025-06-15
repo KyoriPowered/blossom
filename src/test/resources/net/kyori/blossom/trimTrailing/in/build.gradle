@@ -1,0 +1,18 @@
+plugins {
+  id 'java'
+  id 'net.kyori.blossom'
+}
+
+version = "1.0.3"
+
+sourceSets {
+  main {
+    blossom {
+      resources {
+        trimNewlines = false
+        property('name', project.name)
+        property('version', project.version.toString())
+      }
+    }
+  }
+}

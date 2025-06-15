@@ -52,6 +52,18 @@ public interface TemplateSet extends Named {
   @NotNull String getName();
 
   /**
+   * Whether to strip trailing newlines from Pebble tokens that occur at the end of a line.
+   *
+   * <p>The default is {@code true}, which can cause strange behaviour in some file formats
+   * that are whitespace-sensitive.</p>
+   *
+   * @return whether to trim newlines
+   * @since 2.2.0
+   */
+  @Input
+  @NotNull Property<Boolean> getTrimNewlines();
+
+  /**
    * A collection of data files in YAML format.
    *
    * @return the data file collection

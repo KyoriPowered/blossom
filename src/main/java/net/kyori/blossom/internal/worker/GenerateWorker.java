@@ -53,6 +53,8 @@ public abstract class GenerateWorker implements WorkAction<GenerateWorker.Params
 
     Property<String> getHeader();
 
+    Property<Boolean> getTrimNewlines();
+
     ConfigurableFileCollection getSourceDirectories();
 
     ConfigurableFileCollection getIncludesDirectories();
@@ -92,7 +94,8 @@ public abstract class GenerateWorker implements WorkAction<GenerateWorker.Params
         toPaths(params.getIncludesDirectories()),
         toPaths(params.getSourceDirectories()),
         params.getDestinationDirectory().get().getAsFile().toPath(),
-        params.getHeader().getOrNull()
+        params.getHeader().getOrNull(),
+        params.getTrimNewlines().getOrElse(false)
       );
     } catch (final IOException ex) {
       throw new GradleException("Failed to process templates:" + ex.getMessage(), ex);
