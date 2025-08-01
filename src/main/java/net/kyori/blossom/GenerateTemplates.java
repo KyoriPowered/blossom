@@ -32,12 +32,16 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 import org.gradle.workers.WorkerExecutor;
 import org.jspecify.annotations.NullMarked;
 
@@ -47,6 +51,7 @@ import org.jspecify.annotations.NullMarked;
  * @since 2.0.0
  */
 @NullMarked
+@DisableCachingByDefault(because = "Template logic might not be reproducible, cost of generating templates is small.")
 public abstract class GenerateTemplates extends DefaultTask {
 
   /**
@@ -67,6 +72,7 @@ public abstract class GenerateTemplates extends DefaultTask {
    * @since 2.0.0
    */
   @InputFiles
+  @PathSensitive(PathSensitivity.RELATIVE)
   protected abstract ConfigurableFileCollection getIncludesDirectories();
 
   /**
@@ -77,6 +83,7 @@ public abstract class GenerateTemplates extends DefaultTask {
    */
   @InputFiles
   @SkipWhenEmpty
+  @PathSensitive(PathSensitivity.RELATIVE)
   protected abstract ConfigurableFileCollection getSourceDirectories();
 
   /**

@@ -145,6 +145,10 @@ indraPluginPublishing {
   website("https://blossom.kyori.net/")
 }
 
+tasks.validatePlugins {
+  enableStricterValidation = true
+}
+
 spotless {
   fun FormatExtension.applyCommon() {
     endWithNewline()

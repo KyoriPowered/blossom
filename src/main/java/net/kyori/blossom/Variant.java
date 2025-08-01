@@ -27,6 +27,8 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
@@ -57,6 +59,7 @@ public interface Variant extends Named {
    * @since 2.0.0
    */
   @InputFiles
+  @PathSensitive(PathSensitivity.RELATIVE)
   ConfigurableFileCollection getPropertyFiles();
 
   /**

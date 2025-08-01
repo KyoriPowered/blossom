@@ -35,6 +35,8 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
@@ -71,6 +73,7 @@ public interface TemplateSet extends Named {
    * @since 2.0.0
    */
   @InputFiles
+  @PathSensitive(PathSensitivity.RELATIVE)
   ConfigurableFileCollection getPropertyFiles();
 
   /**
