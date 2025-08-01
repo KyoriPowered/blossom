@@ -24,7 +24,7 @@ import net.kyori.mammoth.Configurable;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.PolymorphicDomainObjectContainer;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import static java.util.Objects.requireNonNull;
 
@@ -35,6 +35,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 2.0.0
  */
+@NullMarked
 public interface BlossomExtension {
   String RESOURCE_TEMPLATE_SET_NAME = "resource";
   String GROOVY_SOURCES_TEMPLATE_SET_NAME = "groovy";
@@ -48,7 +49,7 @@ public interface BlossomExtension {
    * @return the resource template set for configuration
    * @since 2.0.0
    */
-  default @NotNull NamedDomainObjectProvider<ResourceTemplateSet> resources() {
+  default NamedDomainObjectProvider<ResourceTemplateSet> resources() {
     return this.customResources(RESOURCE_TEMPLATE_SET_NAME);
   }
 
@@ -58,7 +59,7 @@ public interface BlossomExtension {
    * @param configureAction the action to perform on the primary resource template set
    * @since 2.0.0
    */
-  default void resources(final @NotNull Action<? super ResourceTemplateSet> configureAction) {
+  default void resources(final Action<? super ResourceTemplateSet> configureAction) {
     this.resources().configure(requireNonNull(configureAction, "configureAction"));
   }
 
@@ -71,7 +72,7 @@ public interface BlossomExtension {
    * @return the resource template set for configuration
    * @since 2.1.0
    */
-  default @NotNull NamedDomainObjectProvider<ResourceTemplateSet> customResources(final @NotNull String setName) {
+  default NamedDomainObjectProvider<ResourceTemplateSet> customResources(final String setName) {
     requireNonNull(setName, "setName");
     if (this.getTemplateSets().getNames().contains(setName)) {
       return this.getTemplateSets().named(setName, ResourceTemplateSet.class);
@@ -89,7 +90,7 @@ public interface BlossomExtension {
    * @param configureAction the action to perform on the primary resource template set
    * @since 2.1.0
    */
-  default void customResources(final @NotNull String setName, final @NotNull Action<? super ResourceTemplateSet> configureAction) {
+  default void customResources(final String setName, final Action<? super ResourceTemplateSet> configureAction) {
     this.customResources(setName).configure(requireNonNull(configureAction, "configureAction"));
   }
 
@@ -109,7 +110,7 @@ public interface BlossomExtension {
    * @return the groovy source template set.
    * @since 2.0.0
    */
-  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> groovySources() {
+  default NamedDomainObjectProvider<SourceTemplateSet> groovySources() {
     return this.registerSourceTemplateSet(GROOVY_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::groovy);
   }
 
@@ -121,7 +122,7 @@ public interface BlossomExtension {
    * @param configureAction the action to configure the set with
    * @since 2.0.0
    */
-  default void groovySources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
+  default void groovySources(final Action<? super SourceTemplateSet> configureAction) {
     this.registerSourceTemplateSet(GROOVY_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::groovy).configure(requireNonNull(configureAction, "configureAction"));
   }
 
@@ -133,7 +134,7 @@ public interface BlossomExtension {
    * @return the java source template set.
    * @since 2.0.0
    */
-  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> javaSources() {
+  default NamedDomainObjectProvider<SourceTemplateSet> javaSources() {
     return this.registerSourceTemplateSet(JAVA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::java);
   }
 
@@ -145,7 +146,7 @@ public interface BlossomExtension {
    * @param configureAction the action to configure the set with
    * @since 2.0.0
    */
-  default void javaSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
+  default void javaSources(final Action<? super SourceTemplateSet> configureAction) {
     this.registerSourceTemplateSet(JAVA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::java).configure(requireNonNull(configureAction, "configureAction"));
   }
 
@@ -157,7 +158,7 @@ public interface BlossomExtension {
    * @return the kotlin source template set.
    * @since 2.0.0
    */
-  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> kotlinSources() {
+  default NamedDomainObjectProvider<SourceTemplateSet> kotlinSources() {
     return this.registerSourceTemplateSet(KOTLIN_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::kotlin);
   }
 
@@ -169,7 +170,7 @@ public interface BlossomExtension {
    * @param configureAction the action to configure the set with
    * @since 2.0.0
    */
-  default void kotlinSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
+  default void kotlinSources(final Action<? super SourceTemplateSet> configureAction) {
     this.registerSourceTemplateSet(KOTLIN_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::kotlin).configure(requireNonNull(configureAction, "configureAction"));
   }
 
@@ -181,7 +182,7 @@ public interface BlossomExtension {
    * @return the scala source template set.
    * @since 2.0.0
    */
-  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> scalaSources() {
+  default NamedDomainObjectProvider<SourceTemplateSet> scalaSources() {
     return this.registerSourceTemplateSet(SCALA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::scala);
   }
 
@@ -193,7 +194,7 @@ public interface BlossomExtension {
    * @param configureAction the action to configure the set with
    * @since 2.0.0
    */
-  default void scalaSources(final @NotNull Action<? super SourceTemplateSet> configureAction) {
+  default void scalaSources(final Action<? super SourceTemplateSet> configureAction) {
     this.registerSourceTemplateSet(SCALA_SOURCES_TEMPLATE_SET_NAME, SourceTemplateSet::scala).configure(requireNonNull(configureAction, "configureAction"));
   }
 
@@ -209,7 +210,7 @@ public interface BlossomExtension {
    * @return the source template set
    * @since 2.1.0
    */
-  default @NotNull NamedDomainObjectProvider<SourceTemplateSet> customSources(final @NotNull String setName, final @NotNull Action<? super SourceTemplateSet> configureAction) {
+  default NamedDomainObjectProvider<SourceTemplateSet> customSources(final String setName, final Action<? super SourceTemplateSet> configureAction) {
     requireNonNull(setName, "setName");
     final NamedDomainObjectProvider<SourceTemplateSet> setProvider;
     if (this.getTemplateSets().getNames().contains(setName)) {
@@ -221,14 +222,13 @@ public interface BlossomExtension {
     return setProvider;
   }
 
-
   /**
    * Get all currently registered template sets for this source set.
    *
    * @return the template sets
    * @since 2.0.0
    */
-  @NotNull PolymorphicDomainObjectContainer<TemplateSet> getTemplateSets();
+  PolymorphicDomainObjectContainer<TemplateSet> getTemplateSets();
 
   /**
    * Configure template sets that apply to this source set.
@@ -236,7 +236,7 @@ public interface BlossomExtension {
    * @param configurer the action to perform
    * @since 2.0.0
    */
-  default void templateSets(final @NotNull Action<PolymorphicDomainObjectContainer<TemplateSet>> configurer) {
+  default void templateSets(final Action<PolymorphicDomainObjectContainer<TemplateSet>> configurer) {
     Configurable.configure(this.getTemplateSets(), configurer);
   }
 }

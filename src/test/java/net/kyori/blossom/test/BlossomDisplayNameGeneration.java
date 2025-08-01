@@ -22,8 +22,10 @@ package net.kyori.blossom.test;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.DisplayNameGenerator;
 
+@NullMarked
 public class BlossomDisplayNameGeneration extends DisplayNameGenerator.Standard {
   @Override
   public String generateDisplayNameForMethod(final List<Class<?>> enclosingTypes, final Class<?> clazz, final Method testMethod) {

@@ -44,10 +44,10 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 import org.gradle.plugins.ide.idea.model.IdeaModel;
 import org.gradle.util.GradleVersion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.gradle.ext.ProjectSettings;
 import org.jetbrains.gradle.ext.TaskTriggersConfig;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A template processor for Gradle projects.
@@ -56,6 +56,7 @@ import org.jetbrains.gradle.ext.TaskTriggersConfig;
  *
  * @since 2.0.0
  */
+@NullMarked
 public class Blossom implements ProjectPlugin {
   private static final String GENERATION_GROUP = "blossom";
   private static final String EXTENSION_NAME = "blossom";
@@ -65,10 +66,10 @@ public class Blossom implements ProjectPlugin {
 
   @Override
   public void apply(
-    final @NotNull Project project,
-    final @NotNull PluginContainer plugins,
-    final @NotNull ExtensionContainer extensions,
-    final @NotNull TaskContainer tasks
+    final Project project,
+    final PluginContainer plugins,
+    final ExtensionContainer extensions,
+    final TaskContainer tasks
   ) {
     plugins.withType(JavaBasePlugin.class, $ -> {
       final SetProperty<File> outputDirs = project.getObjects().setProperty(File.class);
@@ -121,10 +122,10 @@ public class Blossom implements ProjectPlugin {
 
     IdeConfigurer.apply(project, new IdeConfigurer.IdeImportAction() {
       @Override
-      public void idea(final @NotNull Project project, final @NotNull IdeaModel idea, final @NotNull ProjectSettings ideaExtension) {
+      public void idea(final Project project, final IdeaModel idea, final ProjectSettings ideaExtension) {
         ((ExtensionAware) ideaExtension).getExtensions().getByType(TaskTriggersConfig.class).afterSync(generateTemplates);
         project.afterEvaluate(p -> {
-          final @Nullable IdeaModel projectIdea = p.getExtensions().getByType(IdeaModel.class);
+          final IdeaModel projectIdea = p.getExtensions().getByType(IdeaModel.class);
           if (projectIdea.getModule() != null) {
             projectIdea.getModule().getGeneratedSourceDirs().addAll(outputDirs.get());
           }
@@ -132,7 +133,7 @@ public class Blossom implements ProjectPlugin {
       }
 
       @Override
-      public void eclipse(final @NotNull Project project, final @NotNull EclipseModel eclipse) {
+      public void eclipse(final Project project, final EclipseModel eclipse) {
         eclipse.synchronizationTasks(generateTemplates);
       }
     });

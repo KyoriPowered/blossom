@@ -22,7 +22,9 @@ package net.kyori.blossom.test;
 
 import java.io.IOException;
 import net.kyori.mammoth.test.TestContext;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public final class SettingsFactory {
   private SettingsFactory() {
   }

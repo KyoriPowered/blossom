@@ -25,13 +25,14 @@ import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.plugins.ide.eclipse.EclipsePlugin;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
 import org.gradle.plugins.ide.idea.model.IdeaModel;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.gradle.ext.IdeaExtPlugin;
 import org.jetbrains.gradle.ext.ProjectSettings;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Configures different IDEs when applicable.
  */
+@NullMarked
 public final class IdeConfigurer {
   private static final String IDEA_PLUGIN = "org.jetbrains.gradle.plugin.idea-ext";
 
@@ -67,7 +68,7 @@ public final class IdeConfigurer {
    * @param project project to apply to
    * @param toPerform the actions to perform
    */
-  public static void apply(final @NotNull Project project, final @NotNull IdeImportAction toPerform) {
+  public static void apply(final Project project, final IdeImportAction toPerform) {
     project.getPlugins().withId(IDEA_PLUGIN, plugin -> {
       if (!IdeConfigurer.isIdeaImport()) {
         return;
@@ -108,7 +109,7 @@ public final class IdeConfigurer {
      * @param idea the basic idea gradle extension
      * @param ideaExtension JetBrain's extensions to the base idea model
      */
-    void idea(final @NotNull Project project, final @NotNull IdeaModel idea, final @NotNull ProjectSettings ideaExtension);
+    void idea(final Project project, final IdeaModel idea, final ProjectSettings ideaExtension);
 
     /**
      * Configure an eclipse project.
@@ -116,6 +117,6 @@ public final class IdeConfigurer {
      * @param project the project being imported
      * @param eclipse the eclipse project model to modify
      */
-    void eclipse(final @NotNull Project project, final @NotNull EclipseModel eclipse);
+    void eclipse(final Project project, final EclipseModel eclipse);
   }
 }

@@ -27,10 +27,12 @@ import org.gradle.api.file.Directory;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A template set that is configured to attach its generated output as a resource directory.
  */
+@NullMarked
 public abstract class ResourceTemplateSetImpl extends TemplateSetImpl implements ResourceTemplateSet {
   @Inject
   public ResourceTemplateSetImpl(final ObjectFactory objects, final String name) {

@@ -28,7 +28,7 @@ import org.gradle.api.provider.MapProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Template variant.
@@ -43,11 +43,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since 2.0.0
  */
+@NullMarked
 @ApiStatus.NonExtendable
 public interface Variant extends Named {
   @Override
   @Input
-  @NotNull String getName();
+  String getName();
 
   /**
    * Data files containing template parameters.
@@ -56,7 +57,7 @@ public interface Variant extends Named {
    * @since 2.0.0
    */
   @InputFiles
-  @NotNull ConfigurableFileCollection getPropertyFiles();
+  ConfigurableFileCollection getPropertyFiles();
 
   /**
    * Runtime properties for inserting into templates.
@@ -65,7 +66,7 @@ public interface Variant extends Named {
    * @since 2.0.0
    */
   @Input
-  @NotNull MapProperty<String, Object> getProperties();
+  MapProperty<String, Object> getProperties();
 
   /**
    * Register multiple properties for this variant.
@@ -73,7 +74,7 @@ public interface Variant extends Named {
    * @param configureAction action to configure properties
    * @since 2.0.0
    */
-  default void properties(final @NotNull Action<MapProperty<String, Object>> configureAction) {
+  default void properties(final Action<MapProperty<String, Object>> configureAction) {
     Configurable.configure(this.getProperties(), configureAction);
   }
 }

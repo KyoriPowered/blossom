@@ -28,21 +28,22 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public final class FileUtils {
   private static final Logger LOGGER = Logging.getLogger(FileUtils.class);
 
   private FileUtils() {
   }
 
-  public static void createDirectoriesSymlinkSafe(final @NotNull Path directory) throws IOException {
+  public static void createDirectoriesSymlinkSafe(final Path directory) throws IOException {
     if (!Files.isDirectory(directory)) { // not checked properly by Files.createDirectories
       Files.createDirectories(directory);
     }
   }
 
-  public static void deleteContents(final @NotNull Path directory) throws IOException {
+  public static void deleteContents(final Path directory) throws IOException {
     if (!Files.isDirectory(directory)) return;
 
     Files.walkFileTree(directory, new FileVisitor<>() {

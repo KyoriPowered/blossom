@@ -39,13 +39,14 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.workers.WorkerExecutor;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Generate real files based on templates and input parameters.
  *
  * @since 2.0.0
  */
+@NullMarked
 public abstract class GenerateTemplates extends DefaultTask {
 
   /**
@@ -55,7 +56,7 @@ public abstract class GenerateTemplates extends DefaultTask {
    * @since 2.0.0
    */
   @Nested
-  public abstract @NotNull Property<TemplateSet> getBaseSet();
+  public abstract Property<TemplateSet> getBaseSet();
 
   /**
    * Files that can be included in templates, but that are not themselves templates.
@@ -66,7 +67,7 @@ public abstract class GenerateTemplates extends DefaultTask {
    * @since 2.0.0
    */
   @InputFiles
-  protected abstract @NotNull ConfigurableFileCollection getIncludesDirectories();
+  protected abstract ConfigurableFileCollection getIncludesDirectories();
 
   /**
    * Source directory for templates to process.
@@ -76,7 +77,7 @@ public abstract class GenerateTemplates extends DefaultTask {
    */
   @InputFiles
   @SkipWhenEmpty
-  protected abstract @NotNull ConfigurableFileCollection getSourceDirectories();
+  protected abstract ConfigurableFileCollection getSourceDirectories();
 
   /**
    * Destination directory for template output.
@@ -85,7 +86,7 @@ public abstract class GenerateTemplates extends DefaultTask {
    * @since 2.0.0
    */
   @OutputDirectory
-  public abstract @NotNull DirectoryProperty getOutputDir();
+  public abstract DirectoryProperty getOutputDir();
 
   /**
    * The worker classpath. This should include Pebble and SnakeYAML engine.

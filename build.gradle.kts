@@ -53,7 +53,9 @@ tasks.jar {
 }
 
 dependencies {
-  implementation(libs.mammoth)
+  implementation(libs.mammoth) {
+    exclude(group = "org.jetbrains", module = "annotations")
+  }
   "workerClasspathCompileOnly"(libs.pebble)
   "workerClasspathCompileOnly"(libs.snakeyamlEngine)
   "workerClasspathCompileOnly"(workerShared.map { it.output })
@@ -62,7 +64,9 @@ dependencies {
   privateRuntime.name(workerShared.map { it.output })
   compileOnly(libs.ideaExtPlugin)
 
-  testImplementation(libs.mammoth.test)
+  testImplementation(libs.mammoth.test) {
+    exclude(group = "org.jetbrains", module = "annotations")
+  }
   testImplementation(platform(libs.junit.bom))
   testImplementation(libs.junit.api)
   testRuntimeOnly(libs.junit.engine)

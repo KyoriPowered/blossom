@@ -40,8 +40,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.gradle.api.GradleException;
 import org.gradle.api.InvalidUserDataException;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class GenerateWorkerInvokerImpl implements GenerateWorkerInvoker {
   private static final String FILE_NAME_CACHE_DISAMBIGUATOR = "###";
   private static final String PEBBLE_EXTENSION = ".peb";

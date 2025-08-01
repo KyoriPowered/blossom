@@ -20,13 +20,14 @@
  */
 package net.kyori.blossom;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A template set for sources.
  *
  * @since 2.0.0
  */
+@NullMarked
 public interface SourceTemplateSet extends TemplateSet {
   /**
    * Configure to generate templates contributing to Groovy sources.
@@ -68,5 +69,5 @@ public interface SourceTemplateSet extends TemplateSet {
    * @param name the name of the language extension
    * @since 2.0.0
    */
-  void namedLanguageExtension(final @NotNull String name);
+  void namedLanguageExtension(final String name);
 }

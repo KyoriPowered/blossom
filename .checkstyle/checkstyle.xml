@@ -102,6 +102,7 @@
     <!-- https://checkstyle.org/config_imports.html#IllegalImport -->
     <module name="IllegalImport">
       <property name="illegalPkgs" value="sun, jdk, com.sun"/>
+      <property name="illegalClasses" value="org.jetbrains.annotations.NotNull, org.jetbrains.annotations.Nullable" />
     </module>
 
     <!-- https://checkstyle.org/config_coding.html#IllegalTokenText -->

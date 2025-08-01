@@ -25,10 +25,12 @@ import net.kyori.blossom.TemplateSet;
 import org.gradle.api.file.Directory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Internal hooks for template sets.
  */
+@NullMarked
 public interface TemplateSetInternal extends TemplateSet {
   // resolve an output directory for templates generated from this set, given build/generated/ as a base
   Directory resolveOutputRoot(final Directory generatedDir);
