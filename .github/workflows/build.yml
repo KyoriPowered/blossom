@@ -5,13 +5,17 @@ on:
     branches: "**"
     tags-ignore: ["**"]
   pull_request:
+  release:
+    types: [ "released" ]
 
 jobs:
   call-build:
-    uses: KyoriPowered/.github/.github/workflows/shared-ci.yaml@trunk
+    uses: "KyoriPowered/.github/.github/workflows/shared-ci.yaml@trunk"
     with:
       runtime_version: 17
+      gradle_release_publish_tasks: "publishPlugins"
     permissions:
-      actions: write
-      contents: write
-    secrets: inherit
+      actions: "write"
+      contents: "write"
+      id-token: "write"
+    secrets: "inherit"

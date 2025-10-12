@@ -11,7 +11,12 @@ plugins {
   alias(libs.plugins.pluginPublish)
   alias(libs.plugins.spotless)
   alias(libs.plugins.ideaExt)
+  alias(libs.plugins.sigstore)
   eclipse
+}
+
+if (System.getenv("GITHUB_ACTIONS").toBoolean()) {
+  apply(plugin = "dev.sigstore.sign")
 }
 
 repositories {

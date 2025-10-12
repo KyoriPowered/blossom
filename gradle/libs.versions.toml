@@ -36,4 +36,5 @@ indra-checkstyle = { id = "net.kyori.indra.checkstyle", version.ref = "indra" }
 indra-gradlePluginPublish = { id = "net.kyori.indra.publishing.gradle-plugin", version.ref = "indra" }
 indra-licenserSpotless = { id = "net.kyori.indra.licenser.spotless", version.ref = "indra" }
 pluginPublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
+sigstore = { id = "dev.sigstore.sign", version = "2.0.0-rc1" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
