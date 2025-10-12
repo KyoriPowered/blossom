@@ -7,7 +7,7 @@ Apply the plugin to your project. Blossom requires a minimum of Java 11. It is t
 
 ```kotlin
 plugins {
-  id("net.kyori.blossom") version "2.1.0"
+  id("net.kyori.blossom") version "2.2.0"
 }
 ```
 
