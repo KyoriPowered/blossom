@@ -13,6 +13,7 @@ jobs:
     uses: "KyoriPowered/.github/.github/workflows/shared-ci.yaml@trunk"
     with:
       runtime_version: 17
+      publish_releases: true
       gradle_release_publish_tasks: "publishPlugins"
     permissions:
       actions: "write"
