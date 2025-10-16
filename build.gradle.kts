@@ -67,7 +67,6 @@ dependencies {
   compileOnly(workerShared.map { it.output })
   privateRuntime.name(workerClasspath.map { it.output })
   privateRuntime.name(workerShared.map { it.output })
-  compileOnly(libs.ideaExtPlugin)
 
   testImplementation(libs.mammoth.test) {
     exclude(group = "org.jetbrains", module = "annotations")
