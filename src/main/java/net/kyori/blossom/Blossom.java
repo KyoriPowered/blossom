@@ -23,8 +23,9 @@ package net.kyori.blossom;
 import java.io.File;
 import net.kyori.blossom.internal.BlossomExtensionImpl;
 import net.kyori.blossom.internal.BuildParameters;
-import net.kyori.blossom.internal.IdeConfigurer;
 import net.kyori.blossom.internal.TemplateSetInternal;
+import net.kyori.blossom.internal.ide.EclipseIntegration;
+import net.kyori.blossom.internal.ide.IdeaIntegration;
 import net.kyori.mammoth.ProjectPlugin;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
@@ -32,7 +33,6 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.Directory;
-import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.PluginContainer;
@@ -41,11 +41,7 @@ import org.gradle.api.provider.SetProperty;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.plugins.ide.eclipse.model.EclipseModel;
-import org.gradle.plugins.ide.idea.model.IdeaModel;
 import org.gradle.util.GradleVersion;
-import org.jetbrains.gradle.ext.ProjectSettings;
-import org.jetbrains.gradle.ext.TaskTriggersConfig;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -120,23 +116,14 @@ public class Blossom implements ProjectPlugin {
       task.dependsOn(tasks.withType(GenerateTemplates.class));
     });
 
-    IdeConfigurer.apply(project, new IdeConfigurer.IdeImportAction() {
-      @Override
-      public void idea(final Project project, final IdeaModel idea, final ProjectSettings ideaExtension) {
-        ((ExtensionAware) ideaExtension).getExtensions().getByType(TaskTriggersConfig.class).afterSync(generateTemplates);
-        project.afterEvaluate(p -> {
-          final IdeaModel projectIdea = p.getExtensions().getByType(IdeaModel.class);
-          if (projectIdea.getModule() != null) {
-            projectIdea.getModule().getGeneratedSourceDirs().addAll(outputDirs.get());
-          }
-        });
-      }
+    IdeaIntegration.addSynchronizationTask(project, generateTemplates);
+    EclipseIntegration.addSynchronizationTask(project, generateTemplates);
 
-      @Override
-      public void eclipse(final Project project, final EclipseModel eclipse) {
-        eclipse.synchronizationTasks(generateTemplates);
+    IdeaIntegration.apply(project, idea -> project.afterEvaluate(p -> {
+      if (idea.getModule() != null) {
+        idea.getModule().getGeneratedSourceDirs().addAll(outputDirs.get());
       }
-    });
+    }));
   }
 
   @Override

@@ -13,7 +13,6 @@ spotless = "8.0.0"
 stylecheck = "0.2.1"
 
 [libraries]
-ideaExtPlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "ideaExt" }
 mammoth = { module = "net.kyori:mammoth", version.ref = "mammoth" }
 pebble = { module = "io.pebbletemplates:pebble", version.ref = "pebble" }
 snakeyamlEngine = { module = "org.snakeyaml:snakeyaml-engine", version.ref = "snakeyaml" }
