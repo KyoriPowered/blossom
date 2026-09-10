@@ -3,13 +3,13 @@ version = "1.0"
 
 [versions]
 checkstyle = "12.0.0"
-ideaExt = "1.3"
+ideaExt = "1.4.1"
 indra = "3.2.0"
 junit = "5.14.0"
 mammoth = "1.5.0"
 pebble = "3.2.4"
 snakeyaml = "2.10"
-spotless = "8.0.0"
+spotless = "8.10.2"
 stylecheck = "0.2.1"
 
 [libraries]
@@ -35,6 +35,6 @@ indra = { id = "net.kyori.indra", version.ref = "indra" }
 indra-checkstyle = { id = "net.kyori.indra.checkstyle", version.ref = "indra" }
 indra-gradlePluginPublish = { id = "net.kyori.indra.publishing.gradle-plugin", version.ref = "indra" }
 indra-licenserSpotless = { id = "net.kyori.indra.licenser.spotless", version.ref = "indra" }
-pluginPublish = { id = "com.gradle.plugin-publish", version = "2.0.0" }
-sigstore = { id = "dev.sigstore.sign", version = "2.0.0-rc1" }
+pluginPublish = { id = "com.gradle.plugin-publish", version = "2.2.1" }
+sigstore = { id = "dev.sigstore.sign", version = "2.3.0" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
