@@ -106,7 +106,6 @@ public class Blossom implements ProjectPlugin {
   private NamedDomainObjectProvider<Configuration> registerBlossomRuntimeConfig(final DependencyHandler dependencies, final ConfigurationContainer configurations) {
     return configurations.register(BLOSSOM_RUNTIME_CONFIG, config -> {
       config.setDescription("Dependencies used to perform template processing with Blossom. Currently includes Pebble and SnakeYAML Engine");
-      config.setVisible(false);
       config.setCanBeConsumed(false);
       config.defaultDependencies(deps -> {
         deps.add(dependencies.create(SNAKEYAML_ARTIFACT_ID + ':' + BuildParameters.SNAKEYAML_VERSION));
